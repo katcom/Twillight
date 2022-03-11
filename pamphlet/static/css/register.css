@@ -1,0 +1,19 @@
+#register-form{
+    width: 50%;
+}
+#register-button{
+    max-width: 150px;
+}
+h1{
+    text-align: center;
+}
+#input-container{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+input,label{
+    margin-top: 10px;
+}
