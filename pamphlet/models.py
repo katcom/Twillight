@@ -1,7 +1,9 @@
+from argparse import ONE_OR_MORE
+from pickle import TRUE
 import profile
 from django.db import models
 from django.contrib.auth.models import User
-
+from django.utils.translation import gettext_lazy as _
 
 # Create your models here.
 class FacePamphletUser(models.Model):
@@ -23,3 +25,39 @@ class UserDescription(models.Model):
 class UserProfile(models.Model):
     user = models.OneToOneField(FacePamphletUser,null=False,on_delete=models.CASCADE)
     profile = models.FileField(blank=True,null=True)
+
+class Visibility(models.TextChoices):
+    PRIVATE_VIEW = 'PRI',_('Private')
+    PUBLIC_VIEW = 'PUB',_('Public')
+    FRIENDS_ONLY_VIEW = 'FRI',_('Friends Only')
+
+class StatusEntry(models.Model):
+    user = models.ForeignKey(User,
+                                on_delete=models.DO_NOTHING,
+                                related_name="status")
+
+    text_content = models.CharField(max_length=1024,
+                                blank=True,
+                                null=False,
+                                default="")
+
+    visibility = models.CharField(max_length=3,
+                                blank=True,
+                                null=False,
+                                choices=Visibility.choices,
+                                default=Visibility.PRIVATE_VIEW)
+
+    isDeleted = models.BooleanField(blank=False,
+                                null=False,
+                                default=False)
+
+    creation_date = models.DateTimeField(auto_now_add=True,
+                                blank=True,null=False,
+                                editable=False)
+
+    last_edited = models.DateTimeField(auto_now=True,
+                                blank=True,
+                                null=False)
+
+    
+

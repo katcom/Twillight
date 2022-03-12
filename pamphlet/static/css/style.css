@@ -1,10 +1,19 @@
 
+html{
+    height: 100%;
+}
 body{
     display: flex;
     flex-direction: column;
+    justify-content: center;
+    height: 100%;
 }
 main {
+    width: 75%;
+    align-self: center;
+    background-color: rgb(224, 246, 253);
+    height: 100%;
+}
+#nav-bar{
     width: 100%;
-    background-color: rgb(216, 245, 255);
-    
 }

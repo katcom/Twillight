@@ -8,20 +8,20 @@
     <div id="input-container" class="container" >
         <form id="register-form" class="row" action="/api/register/" method="post" enctype="multipart/form-data">
             {% csrf_token %}
-            <label class="col">Username</label>
-            <input class="col" id="username-input" name="user_custom_name" type="text">
+            <label class="col">Nick Name</label>
+            <input class="col" id="username-input" name="username" type="text" hint="Enter a username">
             <div class="w-100"></div>
 
-            <label class="col">ID</label>
-            <input class="col" id="userid-input" name="username" type="text">
+            <label class="col">Username</label>
+            <input class="col" id="userid-input" name="user_id" type="text" hint="Enter a unique id">
             <div class="w-100"></div>
 
             <label class="col" >Password</label>
-            <input class="col" id="password-one-input" name="password" type="text">
+            <input type="password" class="col" id="password-one-input" name="password" type="text">
             <div class="w-100"></div>
 
             <label class="col" >Confirm Password</label>
-            <input class="col" id="password-two-input" name="" type="text">      
+            <input type="password" class="col" id="password-two-input" name="" type="text">      
             <div class="w-100"></div>
 
             <div class="col" ></div>

@@ -2,5 +2,9 @@
 {%load bootstrap4 %}
 
 {% block content %}
-
+        <div>
+            {% for entry in status_list %}
+                <h2>{{entry.text_content}}</h2>
+            {% endfor %}
+        </div>
 {% endblock%}

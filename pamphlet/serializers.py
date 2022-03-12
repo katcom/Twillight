@@ -2,11 +2,26 @@ from django.forms import CharField
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from .models import *
-
+from django.contrib.auth.password_validation import validate_password
+from . import utils
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['username','password']
+    def validate_password(self,value):
+        validate_password(password=value)
+        if len(value) < 8:
+            raise serializers.ValidationError('Password should be at least 8 characters long')
+        
+        
+        if not utils.hasLetterInString(value):
+            raise serializers.ValidationError('Password should cotain at least one letter')
+        
+        if not utils.hasNumberInString(value):
+            raise serializers.ValidationError('Password should cotain at least one number')
+
+        
+
 class FacePamphletUserSerializer(serializers.ModelSerializer):
     user = UserSerializer()
     
@@ -35,3 +50,8 @@ class UserSearchResult(serializers.ModelSerializer):
     class Meta:
         model = FacePamphletUser
         fields = ['user_custom_name','user_id']
+
+class StatusEntrySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = StatusEntry
+        fields = ['user','text_content','visibility']

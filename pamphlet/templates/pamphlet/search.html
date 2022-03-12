@@ -1,0 +1,50 @@
+{% extends "pamphlet/base.html" %}
+{%load bootstrap4 %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/search.css'%}">
+<script src="{% static 'js/handlebars-v4.7.7.js'%}"></script>
+
+<div class="container">
+    <form id="search-bar-form" class="input-group md-form form-sm form-2 pl-0" action="/api/search-users/" method="POST">
+        {% csrf_token %}
+        <input name="keyword" class="form-control my-0 py-1 red-border" type="text" placeholder="Search" aria-label="Search">
+        <div id="search-btn" class="input-group-append">
+          <span class="input-group-text red lighten-3" id="basic-text1"><i class="fas fa-search text-grey"
+              aria-hidden="true"></i></span>
+        </div>
+    </form>
+</div>
+<div id="search-result-container" class="container">
+ 
+</div>
+{% verbatim %}
+<script type="text/template" id="single-user-box">
+    {{#each result}}
+    <div class="row justify-content-center user-info-box">
+        <div class="col-1">
+            <img alt="profile">
+        </div>
+        <div class="col-5">
+            <div class="row">
+                <div class="col">
+                    <h3>{{ [user_custom_name] }}</h3>
+                    @{{ [user_id] }}
+                </div>
+                <div class="col-1 col-sm-1">
+                    <button>Add</button>
+                </div>
+                
+            </div>
+            <div>
+                description
+            </div>
+        </div>
+    </div>
+    {{/each}}
+</script>
+{% endverbatim %}
+<script src="{% static 'js/search.js'%}"></script>
+
+{% endblock%}

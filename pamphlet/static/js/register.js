@@ -10,7 +10,7 @@ $("#register-form").on('submit',function(e){
             url:actionUrl,
             data:form.serialize(),
             success:function(data){
-                alert(data)
+                alert("Account Created Successfully!")
             },
             error:function(result){
                 alert(result.responseText)
