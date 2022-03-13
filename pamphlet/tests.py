@@ -1,3 +1,4 @@
+import json
 from urllib import response
 from django.test import TestCase
 from rest_framework.test import APITestCase
@@ -5,6 +6,7 @@ from rest_framework.test import APIClient
 
 from pamphlet.models import FacePamphletUser
 from .model_managers import *
+from .model_factories import *
 # Create your tests here.
 class RegisterTest(APITestCase):
     def setUp(self):
@@ -114,14 +116,23 @@ class StatusTest(APITestCase):
         mangaer = UserManager()
         self.user = mangaer.create(user_custom_name="Docker",username="8942",password="887788uuy")
         self.url='/api/create-status/'
+        self.get_status_url = '/api/get-status/'
         self.client = APIClient()
         self.client.force_login(self.user.user)
+        self.status = StatusEntryFactory()
     def test_create_status_success(self):
         valid_post_data={"text_content":"Hello world! 👋","visibility":'PUB'}
         response = self.client.post(self.url,valid_post_data)
-        response = self.client.post(self.url,valid_post_data)
-        response = self.client.post(self.url,valid_post_data)
         # print(self.user.user.status.all())
-        #print(response.content)
-
+        #print("res",response.content)
         self.assertEqual(response.status_code,201)
+    def test_get_all_status_success(self):
+        url=self.get_status_url+self.status.user.username
+        response = self.client.get(url)
+        #print(response.content)
+        self.assertEqual(response.status_code,200)
+    def test_get_status_has_correct_content(self):
+        url=self.get_status_url+self.status.user.username
+        response = self.client.get(url)
+        data = json.loads(response.content)
+        self.assertEqual(data[0]['text_content'],self.status.text_content)

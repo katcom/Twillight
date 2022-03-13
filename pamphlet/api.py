@@ -91,3 +91,13 @@ def create_status(request):
 
     except:
         return Response(status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+def get_status(request,user_id):
+    try:
+        status_list = User.objects.get(username=user_id).status
+        serializer = StatusGetResultSerializer(status_list,many=True)
+        return Response(serializer.data,status=status.HTTP_200_OK)
+
+    except:
+        return Response(status=status.HTTP_400_BAD_REQUEST)

@@ -52,6 +52,13 @@ class UserSearchResult(serializers.ModelSerializer):
         fields = ['user_custom_name','user_id']
 
 class StatusEntrySerializer(serializers.ModelSerializer):
+
     class Meta:
         model = StatusEntry
         fields = ['user','text_content','visibility']
+
+class StatusGetResultSerializer(serializers.ModelSerializer):
+    user_id = serializers.CharField(source='user.username')
+    class Meta:
+        model = StatusEntry
+        fields = ['user_id','text_content','visibility','creation_date','creation_date','last_edited']

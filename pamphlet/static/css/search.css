@@ -16,7 +16,7 @@
     min-width: 600px;
 }
 .user-info-box{
-    margin:15px;
+    margin:0px;
     background-color: white;
 }
 
@@ -25,8 +25,4 @@
 }
 #search-result-container{
   width: 60%;
-}
-main{
-  display: flex;
-  flex-direction: column;
 }

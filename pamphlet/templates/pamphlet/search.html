@@ -5,6 +5,24 @@
 {% block content %}
 <link rel="stylesheet" type="text/css" href="{% static 'css/search.css'%}">
 <script src="{% static 'js/handlebars-v4.7.7.js'%}"></script>
+<script>
+    function toUserProfilePage(user_id){
+        console.log('exe')
+        //window.location.href="/user/"+user_id
+    }
+    function makeFriendRequestTo(user_id,e){
+        alert('click')
+        console.log(e)
+    }
+</script>
+<style>
+    .user-info-box{
+        cursor: pointer;
+    }
+    .user-info-box:hover{
+        background-color: rgb(245, 245, 245);
+    }
+</style>
 
 <div class="container">
     <form id="search-bar-form" class="input-group md-form form-sm form-2 pl-0" action="/api/search-users/" method="POST">
@@ -22,7 +40,7 @@
 {% verbatim %}
 <script type="text/template" id="single-user-box">
     {{#each result}}
-    <div class="row justify-content-center user-info-box">
+    <div class="row justify-content-center user-info-box" onclick="toUserProfilePage('{{ [user_id] }}')">
         <div class="col-1">
             <img alt="profile">
         </div>
@@ -33,7 +51,7 @@
                     @{{ [user_id] }}
                 </div>
                 <div class="col-1 col-sm-1">
-                    <button>Add</button>
+                    <button class="add_friend_btn" value='{{user_id}}'>Add</button>
                 </div>
                 
             </div>
@@ -45,6 +63,14 @@
     {{/each}}
 </script>
 {% endverbatim %}
-<script src="{% static 'js/search.js'%}"></script>
 
+<script src="{% static 'js/search.js'%}"></script>
+<script>
+    $(".add_friend_btn").each(function(index){
+        $(this).on('click',function(e){
+            console.log(e)
+            e.stopPropagation()
+        })
+    })
+</script>
 {% endblock%}
