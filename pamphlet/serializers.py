@@ -62,3 +62,16 @@ class StatusGetResultSerializer(serializers.ModelSerializer):
     class Meta:
         model = StatusEntry
         fields = ['user_id','text_content','visibility','creation_date','creation_date','last_edited']
+
+class FriendRequestSourceSerializer(serializers.ModelSerializer):
+    # user_id = serializers.CharField(source='user.username',read_only=True)
+    # target_id = serializers.CharField(source='user.username',read_only=True)
+
+    class Meta:
+        model = FriendRequestEntry
+        fields=['user','friend']
+
+class FriendRequestResponseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FriendRequestEntry
+        fields=['is_accepted']

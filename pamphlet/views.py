@@ -31,4 +31,7 @@ def user_home(request):
 def user_profile(request,user_id):
     return render(request,'pamphlet/user_profile.html',{"user_id":user_id})
 
-    
+def friend_request(request):
+    friend_req_list = FriendRequestEntry.objects.filter(friend=request.user)
+    return render(request,'pamphlet/notification.html',{"request_list":friend_req_list})
+

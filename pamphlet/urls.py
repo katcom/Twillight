@@ -17,4 +17,8 @@ urlpatterns = [
     path('api/search-users/',api.search_users,name='api-all-users'),
     path('api/create-status/',api.create_status,name='create_status'),
     path('api/get-status/<str:user_id>',api.get_status,name="get_status"),
+    path('api/make-friend-request/',api.make_friend_request,name="get_status"),
+    path('api/respond-friend-request/',api.respond_friend_request,name="respond_friend_request"),
+    path('friend-request/',views.friend_request,name="friend_request"),
+
 ]

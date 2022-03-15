@@ -1,0 +1,35 @@
+{% extends "pamphlet/base.html" %}
+{%load bootstrap4 %}
+
+{% block content %}
+    <style>
+        .status-box{
+            border-width: 1px;
+            border-color: lightgrey;
+            border-style: none none solid none;
+            background-color: white;
+        }
+        main{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .friends-container{
+            width: 80%;
+        }
+    </style>
+    
+        <div class="friends-container container justify-content-center">
+            {% for friend in friends_list %}
+
+            <div class="row">
+                    <div class="status-box col-9 col-sm-10 col-md-11">
+                        <div class="row">
+                            <h5>{{friend.user_custom_name}}</h3> 
+                        </div>
+                    </div>
+
+            </div>
+            {%endfor%}
+        </div>
+{% endblock%}

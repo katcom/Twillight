@@ -59,5 +59,18 @@ class StatusEntry(models.Model):
                                 blank=True,
                                 null=False)
 
-    
+class FriendRequestEntry(models.Model):
+    user = models.ForeignKey(User,on_delete=models.DO_NOTHING,related_name="friends")
+    friend = models.ForeignKey(User,on_delete=models.DO_NOTHING)
+    is_accepted=models.BooleanField(null=True,blank=False)
+    creation_date = models.DateTimeField(auto_now_add=True,
+                                blank=True,null=False,
+                                editable=False)
+    is_deleted = models.BooleanField(default=False,null=True)
 
+# class NotificationType(models.TextChoices):
+#     FRIEND_REQUEST = 'FRI',_('Friend Request')
+#     OTHER_MESSAGE = 'OTE',_('Friend Request')
+
+# class Notification(models.Model):
+#     type = models.CharField(max_length=3,blank=False,null=False,choices=NotificationType.choices,default=NotificationType.OTHER_MESSAGE)

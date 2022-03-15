@@ -1,0 +1,82 @@
+{% extends "pamphlet/base.html" %}
+{%load bootstrap4 %}
+{% load static %}
+
+{% block content %}
+    <style>
+        h1{
+            text-align: center;
+        }
+    </style>
+    <h1>Hello {{user.username}}</h1>
+
+    <div class="container justify-content-center">
+        {% for req in request_list %}
+        <form class="row" style="background-color: white; width: 500px;" action="/api/respond-friend-request/" method="POST">
+            {% csrf_token%}
+            <div class="col-12">
+                <label>{{req.user}} wants to be friends with you.</label>
+                <input hidden name="record_id" value="{{req.pk}}">
+            </div>
+            <div class="col-12">
+                <button class="btn accept-btn btn-success">Accept</button>
+                <button class="btn reject-btn btn-light">No, thanks</button>
+                <input class="accept-field" name="is_accepted" value='true' disabled hidden>
+                <input class="reject-field" name="is_accepted" value='false' disabled hidden>
+
+            </div>
+        </form>
+        {% endfor %}
+    </div>
+   <script>
+       $(".accept-btn").on('click',function(e){
+           e.preventDefault()
+           form = $(e.currentTarget).closest('form')
+           //console.log(form)
+           actionUrl = form.attr('action')
+           $(form).find('.accept-field').removeAttr('disabled')
+           
+           $.ajax(
+                {
+                    type:"POST",
+                    url:actionUrl,
+                    data:form.serialize(),
+                    success:function(data){
+                        //console.log(data)
+                        alert('accepted')
+                    },
+                    error:function(result){
+                        console.log(result.responseText)
+                        alert('something wrong')
+                    }
+
+                }
+            )
+       })
+
+       $(".reject-btn").on('click',function(e){
+           e.preventDefault()
+           form = $(e.currentTarget).closest('form')
+           //console.log(form)
+           actionUrl = form.attr('action')
+           $(form).find('.reject-field').removeAttr('disabled')
+           
+           $.ajax(
+                {
+                    type:"POST",
+                    url:actionUrl,
+                    data:form.serialize(),
+                    success:function(data){
+                        //console.log(data)
+                        alert('rejected')
+                    },
+                    error:function(result){
+                        console.log(result.responseText)
+                        alert('something wrong')
+                    }
+
+                }
+            )
+       })
+   </script>
+{% endblock%}

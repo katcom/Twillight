@@ -1,5 +1,7 @@
 
 import re
+import pdb; 
+from django.forms import ValidationError
 from .models import *
 from rest_framework import status
 from rest_framework.response import Response
@@ -101,3 +103,48 @@ def get_status(request,user_id):
 
     except:
         return Response(status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+def make_friend_request(request):
+    try:
+        # validate user input, check if user and target exists
+        queryset = request.POST.copy()
+        user_id = queryset.pop('user_id')[0]
+        target_id=queryset.pop('target_id')[0]
+        #print(user_id,target_id)
+        if not User.objects.filter(username=user_id).exists():
+            raise serializers.ValidationError("User with id {} does not exist".format(user_id))
+        if not User.objects.filter(username=target_id).exists():
+            raise serializers.ValidationError("User with id {} does not exist".format(target_id))
+        
+        queryset['user'] = User.objects.get(username=user_id).pk
+        queryset['friend'] = User.objects.get(username=target_id).pk
+
+
+        serializer = FriendRequestSourceSerializer(data=queryset)
+
+        if(serializer.is_valid()):
+            record = serializer.create(serializer.validated_data)
+            return Response(serializer.data,status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return Response(json.dumps(str(e)),status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+def respond_friend_request(request):
+    try:
+        print('CALLED')
+
+        record = FriendRequestEntry.objects.get(pk=request.POST["record_id"])
+        serializer = FriendRequestResponseSerializer(record,data={"is_accepted":request.POST["is_accepted"]},partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            print('updated')
+            return Response(serializer.data,status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+    except:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+  

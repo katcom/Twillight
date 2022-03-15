@@ -19,3 +19,6 @@ class StatusEntryFactory(factory.django.DjangoModelFactory):
     visibility = Visibility.PUBLIC_VIEW
     class Meta:
         model = StatusEntry
+class FriendRequestFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = FriendRequestEntry

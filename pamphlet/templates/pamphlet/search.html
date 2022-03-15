@@ -6,14 +6,7 @@
 <link rel="stylesheet" type="text/css" href="{% static 'css/search.css'%}">
 <script src="{% static 'js/handlebars-v4.7.7.js'%}"></script>
 <script>
-    function toUserProfilePage(user_id){
-        console.log('exe')
-        //window.location.href="/user/"+user_id
-    }
-    function makeFriendRequestTo(user_id,e){
-        alert('click')
-        console.log(e)
-    }
+
 </script>
 <style>
     .user-info-box{
@@ -66,11 +59,6 @@
 
 <script src="{% static 'js/search.js'%}"></script>
 <script>
-    $(".add_friend_btn").each(function(index){
-        $(this).on('click',function(e){
-            console.log(e)
-            e.stopPropagation()
-        })
-    })
+
 </script>
 {% endblock%}
