@@ -1,5 +1,7 @@
 from django.shortcuts import render
 
+from .serializers import *
+from .model_managers import *
 from .models import *
 # Create your views here.
 def index(request):
@@ -32,6 +34,26 @@ def user_profile(request,user_id):
     return render(request,'pamphlet/user_profile.html',{"user_id":user_id})
 
 def friend_request(request):
-    friend_req_list = FriendRequestEntry.objects.filter(friend=request.user)
+    friend_req_list = FriendRequestEntry.objects.filter(target=request.user)
     return render(request,'pamphlet/notification.html',{"request_list":friend_req_list})
 
+def friend_list(request):
+    # friends_record_list = UnilateralFriendshipRecord.objects.filter(is_deleted=False)
+    # friends_list = []
+    # for entry in friends_record_list:
+    #     friend =  FacePamphletUser.objects.get(user=entry.friendship.friend)
+    #     friends_list.append(friend)
+    # serializer = FriendSerializer(friends_list,many=True)
+    # print(serializer.data)
+    return render(request,'pamphlet/friends_status.html')
+
+def private_chat_room(request,friend_id):
+    try:
+        manager = PrivateChatRoomManager()
+        room = manager.get_or_create(request.user.username,friend_id)
+
+        return render(request,'pamphlet/room.html',{
+                    'room_name':str(room.room_id)
+        })
+    except Exception as e:
+        print('err:',e)

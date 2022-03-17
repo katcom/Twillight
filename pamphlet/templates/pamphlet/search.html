@@ -44,7 +44,14 @@
                     @{{ [user_id] }}
                 </div>
                 <div class="col-1 col-sm-1">
-                    <button class="add_friend_btn" value='{{user_id}}'>Add</button>
+                    <button class="add_friend_btn btn btn-primary" value='{{user_id}}'>Add</button>
+                    <form hidden action='/api/make-friend-request/' method="POST">
+                    {% endverbatim %}
+                        {%csrf_token%}
+                    {% verbatim %}
+
+                        <input name='target_id' value='{{user_id}}'>
+                    </form>
                 </div>
                 
             </div>
@@ -57,8 +64,47 @@
 </script>
 {% endverbatim %}
 
+
 <script src="{% static 'js/search.js'%}"></script>
 <script>
+    function display_serach_result(data){
+    data_dict ={result:data}
+    console.log(data_dict)
+    var tpl = $("#single-user-box").html()
+    var template = Handlebars.compile(tpl)
+    var html = template(data_dict)
+    $("#search-result-container").html(html)
 
+    $(".add_friend_btn").on('click',function(e){
+        console.log("e")
+        console.log(e)
+        form = $(e.currentTarget).siblings('form')
+        console.log("form")
+
+        console.log(form)
+        actionUrl = form.attr('action')
+        
+        $.ajax(
+            {
+                type:'POST',
+                url:actionUrl,
+                data:form.serialize(),
+                success:function(data){
+                    alert('Request Sent')
+                },
+                error:function(result){
+                    alert('something wrong')
+                    console.log(result)
+                }
+            }
+        )
+
+        e.stopPropagation()
+    })
+}
+
+function makeFriendRequestTo(user_id){
+    
+}
 </script>
 {% endblock%}

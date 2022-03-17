@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'pamphlet.apps.PamphletConfig',
     'bootstrap4',
     'rest_framework',
+    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -133,4 +134,14 @@ REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
     )
+}
+
+ASGI_APPLICATION = 'face_pamphlet.asgi.application'
+CHANNEL_LAYERS = {
+    'default':{
+        'BACKEND':"channels_redis.core.RedisChannelLayer",
+        'CONFIG':{
+            "hosts":[('127.0.0.1',6379)]
+        }
+    }
 }

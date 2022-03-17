@@ -10,6 +10,9 @@ urlpatterns = [
     path('home/',login_required(login_url='/login/')(views.user_home),name='home'),
     path("user/<str:user_id>",views.user_profile,name="user_profile"),
     path('search-users/',views.search_user,name='register'),
+    path('friend-request/',views.friend_request,name="friend_request"),
+    path('friend-list/',views.friend_list,name="friend_request"),
+
     path('api/login/',api.login,name="api-login"),
     path('api/register/',api.register,name='api-register'),
     path('api/logout/',api.logout,name='api-logout'),
@@ -19,6 +22,8 @@ urlpatterns = [
     path('api/get-status/<str:user_id>',api.get_status,name="get_status"),
     path('api/make-friend-request/',api.make_friend_request,name="get_status"),
     path('api/respond-friend-request/',api.respond_friend_request,name="respond_friend_request"),
-    path('friend-request/',views.friend_request,name="friend_request"),
+    path('api/get-friends-list/',api.get_friends_list,name="get_friend_list"),
+    # path('<str:room_name>/',login_required(login_url='/login/')(views.room),name='room'),
+    path('private-chat-room/<str:friend_id>/',login_required(login_url='/login/')(views.private_chat_room),name='room'),
 
 ]

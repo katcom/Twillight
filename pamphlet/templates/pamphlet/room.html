@@ -1,0 +1,178 @@
+<!-- chat/templates/chat/room.html -->
+{% load bootstrap4 %}
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    {% bootstrap_css%}
+
+    <meta charset="utf-8"/>
+    <title>Chat Room</title>
+</head>
+<body>
+    <link rel="stylesheet" type="text/css" href="{% static 'fontawesome/css/all.min.css'%}">
+
+    <script src="{% static 'js/jquery-3.6.0.min.js'%}"></script>
+
+    <script src="{% static 'js/handlebars-v4.7.7.js'%}"></script>
+
+    <style>
+        .my-message-box{
+            width: 50%;
+            background-color: lightgreen;
+            border-style: solid;
+            border-width: 1px;
+            border-color: lightblue;
+            padding:20px 10px 20px 15px;
+            word-wrap: break-word;
+            
+        }
+        .incoming-message-box{
+            width: 50%;
+            padding:10px;
+            background-color: white;
+            border-style: solid;
+            border-width: 1px;
+            border-color: lavender;
+            word-wrap: break-word;
+            padding:20px 10px 20px 15px;
+
+        }
+        .single-message-record{
+            margin-top: 10px;
+            margin-bottom:10px ;
+        }
+        #chat-log-container{
+            height: 80vh;
+            background-color: whitesmoke;
+            border:1px solid lightgray;
+            overflow: auto;
+        }
+        #input-container{
+            background-color: whitesmoke;
+        }
+        #emoji-button{
+            background:none;
+            border: none;
+            padding: 0 0 0 0;
+            margin: 0 0 0 0;
+        }
+        /* #emoji-button i{
+            position: absolute;
+            transform: translate(10px,-11px);
+            z-index: 2; 
+        } */
+        #text-input-container{
+            border: 1px solid lightgrey;
+            background-color: white;
+            display: flex;
+            margin: 10px 10px 10px 10px ;
+        }
+        #text-input-container:focus-within{
+            border-color: lightskyblue;
+        }
+        #text-input-container > textarea[type='text']{
+            background-color: none;
+            border: none;
+            outline: none;
+            flex-grow: 1;
+            margin: 15px;
+        }
+        #chat-message-submit{
+            width: 300px;
+        }
+    </style>
+    
+    <!-- <textarea id="chat-log" cols="100" rows="20"></textarea><br> -->
+    <div id="chat-log-container" class="container">
+
+    </div>
+    <div class="container " id="input-container">
+        <div class="row justify-content-center">
+            <div id="text-input-container" class="col-10 rounded">
+                <button id="emoji-button"><i class="far fa-grin"></i></button>
+
+                <textarea id="chat-message-input" type="text" ></textarea><br>
+            </div>
+
+            <input  class='col-1' id="chat-message-submit" type="button" value="Send">
+        </div>
+
+    </div>
+
+    {{ room_name|json_script:"room-name" }}
+    <script>
+        const roomName = JSON.parse(document.getElementById('room-name').textContent);
+
+        const chatSocket = new WebSocket(
+            'ws://'
+            + window.location.host
+            + '/ws/chat/'
+            + roomName
+            + '/'
+        );
+
+        chatSocket.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+            console.log(data)
+            // document.querySelector('#chat-log').value += (data.sender+":"+data.message + '\n');
+            add_message_box(data)
+        };
+
+        chatSocket.onclose = function(e) {
+            console.error('Chat socket closed unexpectedly');
+        };
+
+        document.querySelector('#chat-message-input').focus();
+        document.querySelector('#chat-message-input').onkeyup = function(e) {
+            if (e.keyCode === 13) {  // enter, return
+                document.querySelector('#chat-message-submit').click();
+            }
+        };
+
+        document.querySelector('#chat-message-submit').onclick = function(e) {
+            const messageInputDom = document.querySelector('#chat-message-input');
+            const message = messageInputDom.value;
+            chatSocket.send(JSON.stringify({
+                'message': message
+            }));
+            messageInputDom.value = '';
+        };
+        
+        function add_message_box(data){
+            if (data.message_direction == 'incoming'){
+                var tpl = $("#single-incoming-message-box").html()
+            }else{
+                var tpl = $("#single-outgoing-message-box").html()
+            }
+            var template = Handlebars.compile(tpl)
+            var html = template(data)
+            $('#chat-log-container').append(html)
+        }
+    </script>
+
+    {% verbatim %}
+    <script type="text/template" id="single-outgoing-message-box">
+        <div class="row  justify-content-end single-message-record">
+
+            <div class="col-5 my-message-box rounded">
+                {{message}}
+            </div>
+            <div class="col-1">
+                <img alt="profile">
+            </div>
+        </div>
+    </script>
+    <script type="text/template" id="single-incoming-message-box">
+        <div class="row justify-content-start single-message-record">
+            <div class="col-1">
+                <img alt="profile">
+            </div>
+            <div class="col-5 incoming-message-box rounded">
+                {{message}}
+            </div>
+        </div>
+    </script>
+    {% endverbatim %}
+</body>
+</html>

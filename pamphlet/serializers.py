@@ -29,21 +29,21 @@ class FacePamphletUserSerializer(serializers.ModelSerializer):
         model = FacePamphletUser
         fields = ['user_custom_name','user']
     
-    def create(self,validated_data):
-        # user = User.objects.get(username=self.initial_data['username'])
-        # f_user = FacePamphletUser(**{**validated_data,
-        #     'user':user
-        # })
-        # f_user.save()
-        # user_dict =validated_data.pop('user')
-        # user = User.objects.create(**user_dict)
-        # f_user = FacePamphletUser.objects.create(user=user,**validated_data)
-        # return f_user
-        user_data = validated_data.pop('user')
-        user = User.objects.create(**user_data)
-        f_user = FacePamphletUser.objects.create(user=user, **validated_data)
+    # def create(self,validated_data):
+    #     # user = User.objects.get(username=self.initial_data['username'])
+    #     # f_user = FacePamphletUser(**{**validated_data,
+    #     #     'user':user
+    #     # })
+    #     # f_user.save()
+    #     # user_dict =validated_data.pop('user')
+    #     # user = User.objects.create(**user_dict)
+    #     # f_user = FacePamphletUser.objects.create(user=user,**validated_data)
+    #     # return f_user
+    #     user_data = validated_data.pop('user')
+    #     user = User.objects.create(**user_data)
+    #     f_user = FacePamphletUser.objects.create(user=user, **validated_data)
 
-        return f_user
+    #     return f_user
 
 class UserSearchResult(serializers.ModelSerializer):
     user_id = serializers.CharField(source='user.username')
@@ -69,9 +69,33 @@ class FriendRequestSourceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = FriendRequestEntry
-        fields=['user','friend']
+        fields=['user','target']
 
 class FriendRequestResponseSerializer(serializers.ModelSerializer):
     class Meta:
         model = FriendRequestEntry
         fields=['is_accepted']
+
+# class ValidUnilateralFriendshipSerializer(serializers.ModelSerializer):
+
+#     class Meta:
+#         model = UnilateralFriendshipRecord
+#         fields=['friendship']
+#     def validate_friendship(self,value):
+#         if UnilateralFriendshipRecord.objects.filter(friendship__user=value.user,friendship__friend=value.friend).exist():
+#             raise serializers.ValidationError('Relationship already exists')
+
+
+# class UnilaternalFriendRecordshipSerializer(serializers.ModelSerializer):
+#     user = models.CharField(source='UnilateralFriendship.user')
+#     user = models.CharField(source='UnilateralFriendship.user')
+
+#     class Meta:
+#         model = UnilateralFriendship
+#         fields=['user','friend']
+
+class FriendSerializer(serializers.ModelSerializer):
+    user_id = serializers.CharField(source='user.username')
+    class Meta:
+        model = FacePamphletUser
+        fields=['user_id','user_custom_name']

@@ -4,7 +4,7 @@ import profile
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
-
+import uuid
 # Create your models here.
 class FacePamphletUser(models.Model):
     user = models.OneToOneField(User,on_delete=models.CASCADE)
@@ -60,17 +60,60 @@ class StatusEntry(models.Model):
                                 null=False)
 
 class FriendRequestEntry(models.Model):
-    user = models.ForeignKey(User,on_delete=models.DO_NOTHING,related_name="friends")
-    friend = models.ForeignKey(User,on_delete=models.DO_NOTHING)
+    user = models.ForeignKey(User,on_delete=models.DO_NOTHING,related_name="friend_requests")
+    target = models.ForeignKey(User,on_delete=models.DO_NOTHING)
     is_accepted=models.BooleanField(null=True,blank=False)
     creation_date = models.DateTimeField(auto_now_add=True,
                                 blank=True,null=False,
                                 editable=False)
-    is_deleted = models.BooleanField(default=False,null=True)
+    message = models.CharField(max_length=256,default="",blank=True,null=False,editable=False)
 
+class FriendshipCreationRecord(models.Model):
+    creation_date = models.DateTimeField(auto_now_add=True,blank=True,
+                                null=False,
+                                editable=False)
+class UnilateralFriendship(models.Model):
+    user = models.ForeignKey(User,
+                        on_delete=models.DO_NOTHING,
+                        related_name="friends")
+
+    friend = models.ForeignKey(User,
+                        on_delete=models.DO_NOTHING)
+    creation_record = models.ForeignKey(FriendshipCreationRecord,on_delete=models.DO_NOTHING,null=False)
+    def __str__(self):
+        return "user:{}, friend:{}, creation_id:{}, creation_date:{}".format(self.user,self.friend,self.creation_record.pk,self.creation_record.creation_date)
+
+class ValidUnilateralFriendship(models.Model):
+    friendship = models.OneToOneField(UnilateralFriendship,
+                                on_delete=models.CASCADE)
+
+    # is_deleted = models.BooleanField(default=False,
+    #                             null=False,
+    #                             blank=False)
+
+    # last_updated = models.DateTimeField(auto_now=True,
+    #                             blank=True,
+    #                             null=False)
+
+    def __str__(self):
+        return "user:{}, friend:{}".format(self.friendship.user,self.friendship.friend)
 # class NotificationType(models.TextChoices):
 #     FRIEND_REQUEST = 'FRI',_('Friend Request')
 #     OTHER_MESSAGE = 'OTE',_('Friend Request')
 
 # class Notification(models.Model):
 #     type = models.CharField(max_length=3,blank=False,null=False,choices=NotificationType.choices,default=NotificationType.OTHER_MESSAGE)
+
+class PrivateChatRoom(models.Model):
+    user_1 = models.ForeignKey(User,
+                        on_delete=models.DO_NOTHING,
+                        related_name="private_chat_rooms")
+    user_2 = models.ForeignKey(User,
+                        on_delete=models.DO_NOTHING)
+    room_id = models.UUIDField(default=uuid.uuid4)
+    
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['user_1','user_2'],name="unique user pair"),
+            models.UniqueConstraint(fields=['user_2','user_1'],name="unique user pair 2"),
+        ]

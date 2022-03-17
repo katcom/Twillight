@@ -1,4 +1,5 @@
 
+from datetime import datetime
 import re
 import pdb; 
 from django.forms import ValidationError
@@ -109,16 +110,16 @@ def make_friend_request(request):
     try:
         # validate user input, check if user and target exists
         queryset = request.POST.copy()
-        user_id = queryset.pop('user_id')[0]
+        user_id=request.user.username
         target_id=queryset.pop('target_id')[0]
         #print(user_id,target_id)
-        if not User.objects.filter(username=user_id).exists():
-            raise serializers.ValidationError("User with id {} does not exist".format(user_id))
+        # if not User.objects.filter(username=user_id).exists():
+        #     raise serializers.ValidationError("User with id {} does not exist".format(user_id))
         if not User.objects.filter(username=target_id).exists():
             raise serializers.ValidationError("User with id {} does not exist".format(target_id))
         
         queryset['user'] = User.objects.get(username=user_id).pk
-        queryset['friend'] = User.objects.get(username=target_id).pk
+        queryset['target'] = User.objects.get(username=target_id).pk
 
 
         serializer = FriendRequestSourceSerializer(data=queryset)
@@ -134,17 +135,35 @@ def make_friend_request(request):
 @api_view(['POST'])
 def respond_friend_request(request):
     try:
-        print('CALLED')
+        #print('CALLED')
 
         record = FriendRequestEntry.objects.get(pk=request.POST["record_id"])
         serializer = FriendRequestResponseSerializer(record,data={"is_accepted":request.POST["is_accepted"]},partial=True)
         if serializer.is_valid():
-            serializer.save()
-            print('updated')
+            new_record = serializer.save()
+            #print(new_record.user)
+
+            if new_record.is_accepted:
+                manager = FriendshipManager()
+                manager.create(request.user,new_record.user)
+
+            #print('updated')
             return Response(serializer.data,status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
-    except:
+    except Exception as e:
+        print(e)
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
-  
+@api_view(['GET'])
+def get_friends_list(request):
+    try:
+        friends_record_list = ValidUnilateralFriendship.objects.filter(friendship__user=request.user)
+        friends_list = []
+        for entry in friends_record_list:
+            friend =  FacePamphletUser.objects.get(user=entry.friendship.friend)
+            friends_list.append(friend)
+        serializer = FriendSerializer(friends_list,many=True)
+        return Response(serializer.data,status=status.HTTP_200_OK)
+    except:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
