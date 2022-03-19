@@ -7,3 +7,4 @@ admin.site.register(FriendRequestEntry)
 admin.site.register(UnilateralFriendship)
 
 admin.site.register(ValidUnilateralFriendship)
+admin.site.register(StatusEntryImage)

@@ -1,8 +1,11 @@
 
+from asyncore import file_wrapper
 from datetime import datetime
 import re
 import pdb; 
 from django.forms import ValidationError
+from .utils import *
+from .forms import StatusEntryImageForm
 from .models import *
 from rest_framework import status
 from rest_framework.response import Response
@@ -83,16 +86,42 @@ def create_status(request):
             return Response("Unauthorized! No user logged in!",status=status.HTTP_401_UNAUTHORIZED)
         queryset = request.POST.copy()
         queryset['user'] = request.user.pk
+        print(queryset)
+        print('files:')
+        print(request.FILES)
+        print(type(request.FILES))
+
+        
+        
         serializer = StatusEntrySerializer(data=queryset)
         if serializer.is_valid():
             status_entry = serializer.save()
+            req = request.POST.copy()
+            req['status_entry'] =status_entry
+            print("status created")
+            print(len(request.FILES))
+            for key,file in request.FILES.items():
+                print('loop:',key)
+                req['status_entry']=status_entry
+                file_dict = {"image_file":file}
+                form = StatusEntryImageForm(req, file_dict)
+                print('checkout file')
+                if form.is_valid():
+                    form.save()
+                    print("file created")
+                else:
+                    print("form err:",form.errors)
+                    return Response(form.errors,status=status.HTTP_400_BAD_REQUEST)
+
+                
             return Response(serializer.data,status=status.HTTP_201_CREATED)
 
         else:
             return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
 
 
-    except:
+    except Exception as e:
+        print(e)
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
@@ -167,3 +196,16 @@ def get_friends_list(request):
         return Response(serializer.data,status=status.HTTP_200_OK)
     except:
         return Response(status=status.HTTP_400_BAD_REQUEST)
+
+# @api_view(['POST'])
+# def get_friends_list(request):
+#     try:
+#         friends_record_list = ValidUnilateralFriendship.objects.filter(friendship__user=request.user)
+#         friends_list = []
+#         for entry in friends_record_list:
+#             friend =  FacePamphletUser.objects.get(user=entry.friendship.friend)
+#             friends_list.append(friend)
+#         serializer = FriendSerializer(friends_list,many=True)
+#         return Response(serializer.data,status=status.HTTP_200_OK)
+#     except:
+#         return Response(status=status.HTTP_400_BAD_REQUEST)

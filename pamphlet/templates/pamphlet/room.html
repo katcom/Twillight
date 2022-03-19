@@ -15,6 +15,7 @@
     <script src="{% static 'js/jquery-3.6.0.min.js'%}"></script>
 
     <script src="{% static 'js/handlebars-v4.7.7.js'%}"></script>
+    <link  rel="stylesheet" href="{% static 'emoji-picker-main/lib/css/emoji.css'%}">
 
     <style>
         .my-message-box{
@@ -81,8 +82,20 @@
         #chat-message-submit{
             width: 300px;
         }
+        .emoji-wysiwyg-editor {
+            height: 100%!important;
+            width: 100%!important;
+            border: none;
+            line-height: 1.5;
+        }
+        .emoji-wysiwyg-editor:focus{
+            outline: none;
+            border:none;
+        }
+        .emoji-picker-container{
+            width: 100%;
+        }
     </style>
-    
     <!-- <textarea id="chat-log" cols="100" rows="20"></textarea><br> -->
     <div id="chat-log-container" class="container">
 
@@ -91,8 +104,10 @@
         <div class="row justify-content-center">
             <div id="text-input-container" class="col-10 rounded">
                 <button id="emoji-button"><i class="far fa-grin"></i></button>
+                <p class="lead emoji-picker-container">
 
-                <textarea id="chat-message-input" type="text" ></textarea><br>
+                <textarea class="form-control textarea-control" id="chat-message-input" type="text"  data-emojiable="true"></textarea><br>
+                </p>
             </div>
 
             <input  class='col-1' id="chat-message-submit" type="button" value="Send">
@@ -174,5 +189,23 @@
         </div>
     </script>
     {% endverbatim %}
+    <script src="{% static 'emoji-picker-main/lib/js/config.js' %}"></script>
+  <script src="{% static 'emoji-picker-main/lib/js/util.js' %}"></script>
+  <script src="{% static 'emoji-picker-main/lib/js/jquery.emojiarea.js' %}"></script>
+  <script src="{% static 'emoji-picker-main/lib/js/emoji-picker.js' %}"></script>
+  <script>
+    $(function() {
+      // Initializes and creates emoji set from sprite sheet
+      window.emojiPicker = new EmojiPicker({
+        emojiable_selector: '[data-emojiable=true]',
+        assetsPath: "{% static 'emoji-picker-main/lib/img/' %}",
+        popupButtonClasses: 'far fa-grin'
+      });
+      // Finds all elements with `emojiable_selector` and converts them to rich emoji input fields
+      // You may want to delay this step if you have dynamically created input fields that appear later in the loading process
+      // It can be called as many times as necessary; previously converted input fields will not be converted again
+      window.emojiPicker.discover();
+    });
+  </script>
 </body>
 </html>

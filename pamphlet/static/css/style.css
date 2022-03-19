@@ -13,10 +13,33 @@ main {
     align-self: center;
     background-color: rgb(224, 246, 253);
     height: 100%;
+    overflow: scroll;
 }
 #nav-bar{
     width: 100%;
 }
 .date-info{
     color: grey;
+}
+.icon-span{
+    width: 25px;
+    height: 25px;
+    padding-right:3px;
+    display:inline-block;
+}
+.icon-span>img{
+    width: 100%;
+}
+
+.avatar-icon{
+    width: 35px;
+    height: 35px;
+    padding-right:3px;
+    display:inline-block;
+    background-color: white;
+    border-radius: 50%;
+    border: 1px solid lightblue;
+}
+.avatar-icon>img{
+    width: 100%;
 }

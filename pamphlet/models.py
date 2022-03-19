@@ -5,6 +5,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
 import uuid
+
+from pamphlet.utils import getStatusFilePathByUsername
 # Create your models here.
 class FacePamphletUser(models.Model):
     user = models.OneToOneField(User,on_delete=models.CASCADE)
@@ -117,3 +119,8 @@ class PrivateChatRoom(models.Model):
             models.UniqueConstraint(fields=['user_1','user_2'],name="unique user pair"),
             models.UniqueConstraint(fields=['user_2','user_1'],name="unique user pair 2"),
         ]
+class StatusEntryImage(models.Model):
+    status_entry = models.ForeignKey(StatusEntry,null=False,blank=False,on_delete=models.CASCADE)
+    image_file = models.ImageField(blank=True,null=TRUE,upload_to=getStatusFilePathByUsername)
+    thumbnail = models.ImageField(null=True)
+    description = models.CharField(max_length=128,null=True,blank=True,default="")

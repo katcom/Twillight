@@ -145,3 +145,6 @@ CHANNEL_LAYERS = {
         }
     }
 }
+
+MEDIA_ROOT='UserAppData'
+MEDIA_URL='/user_data/images/'
