@@ -23,6 +23,8 @@ urlpatterns = [
     path('api/make-friend-request/',api.make_friend_request,name="get_status"),
     path('api/respond-friend-request/',api.respond_friend_request,name="respond_friend_request"),
     path('api/get-friends-list/',api.get_friends_list,name="get_friend_list"),
+    path('api/get-current-user-status/',api.get_current_user_status,name="get_friend_list"),
+
     # path('<str:room_name>/',login_required(login_url='/login/')(views.room),name='room'),
     path('private-chat-room/<str:friend_id>/',login_required(login_url='/login/')(views.private_chat_room),name='room'),
 

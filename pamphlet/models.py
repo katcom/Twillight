@@ -88,15 +88,6 @@ class UnilateralFriendship(models.Model):
 class ValidUnilateralFriendship(models.Model):
     friendship = models.OneToOneField(UnilateralFriendship,
                                 on_delete=models.CASCADE)
-
-    # is_deleted = models.BooleanField(default=False,
-    #                             null=False,
-    #                             blank=False)
-
-    # last_updated = models.DateTimeField(auto_now=True,
-    #                             blank=True,
-    #                             null=False)
-
     def __str__(self):
         return "user:{}, friend:{}".format(self.friendship.user,self.friendship.friend)
 # class NotificationType(models.TextChoices):
@@ -120,7 +111,7 @@ class PrivateChatRoom(models.Model):
             models.UniqueConstraint(fields=['user_2','user_1'],name="unique user pair 2"),
         ]
 class StatusEntryImage(models.Model):
-    status_entry = models.ForeignKey(StatusEntry,null=False,blank=False,on_delete=models.CASCADE)
+    status_entry = models.ForeignKey(StatusEntry,null=False,blank=False,on_delete=models.CASCADE,related_name="images")
     image_file = models.ImageField(blank=True,null=TRUE,upload_to=getStatusFilePathByUsername)
     thumbnail = models.ImageField(null=True)
     description = models.CharField(max_length=128,null=True,blank=True,default="")

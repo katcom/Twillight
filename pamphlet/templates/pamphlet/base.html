@@ -1,13 +1,30 @@
 {%load bootstrap4 %}
+{%load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 {% include "./header.html" %}
     <body>
-        <header>
-            {% include "./title.html" %}
+        <div class="d-flex" id="wrapper">
+
+        <header  class="border-end bg-white" id="sidebar-wrapper">
+            {% include "./dashboard.html" %}
         </header>
-        <main>
-            {%block content%}  Did not render content {%endblock%}
-        </main>
+
+
+        <div id="page-content-wrapper">
+            <header>
+                {% include "./nav.html" %}
+            </header>
+            <main>
+
+                {%block content%}  Did not render content {%endblock%}
+            </main>
+        </div>
+
+        </div>
+        <script src="{% static 'js/base.js'%}"></script>
+        {% bootstrap_javascript jquery="full" %}
+
     </body>
 </html>

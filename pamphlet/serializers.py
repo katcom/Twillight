@@ -99,3 +99,12 @@ class FriendSerializer(serializers.ModelSerializer):
     class Meta:
         model = FacePamphletUser
         fields=['user_id','user_custom_name']
+class StatusEntryImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = StatusEntryImage
+        fields=['image_file','description']
+class CurrentUserStatusSerializer(serializers.ModelSerializer):
+    images = StatusEntryImageSerializer(many=True,read_only=True)
+    class Meta:
+        model=StatusEntry
+        fields=['text_content','visibility','last_edited','images']

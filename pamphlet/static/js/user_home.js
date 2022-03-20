@@ -48,11 +48,11 @@ $('.file-upload-input').on('change',function(e){
     showPreviewContainer()
 })
 function showPreviewContainer(){
-    $("#image-preview-container").addClass("show-container")
+    $("#create-status-image-preview-container").addClass("show-container")
     
 }
 function hidePreviewContainer(){
-    $("#image-preview-container").removeClass("show-container")
+    $("#create-status-image-preview-container").removeClass("show-container")
 }
 function adjust_preview_image_layout(){
     console.log('adjust layout')

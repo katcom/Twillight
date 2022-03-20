@@ -209,3 +209,15 @@ def get_friends_list(request):
 #         return Response(serializer.data,status=status.HTTP_200_OK)
 #     except:
 #         return Response(status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+def get_current_user_status(request):
+    if not request.user.is_authenticated:
+        return Response("Unauthorized! No user logged in!",status=status.HTTP_401_UNAUTHORIZED)
+    try:
+
+        record = StatusEntry.objects.filter(user=request.user,isDeleted=False);
+        serializer = CurrentUserStatusSerializer(record,many=True)
+        return Response(serializer.data,status=status.HTTP_200_OK)
+    except Exception as e :
+        return Response(json.dumps(str(e)),status=status.HTTP_400_BAD_REQUEST)

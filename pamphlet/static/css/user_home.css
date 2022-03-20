@@ -4,7 +4,11 @@ h1{
 #create-status-container{
     display: flex;
     flex-direction: row;
-    
+    width: 80%;
+    justify-content: center;
+    background-color: white;
+    padding-top: 30px;
+    border-bottom: 1px solid lightgray;
 }
 #status-text-input{
     width: 100%;
@@ -14,23 +18,29 @@ h1{
     display: flex;
     flex-direction:row;
     justify-content: space-around;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
 }
-#image-preview-container{
+.image-preview-container{
     display: none;
     flex-wrap: wrap;
     flex-direction: row;
-    height: 300px;
+    height: auto;
     width: 100%;
+    overflow: hidden;
 }
 .img-box{
     width: 100%;
     flex-grow: 1;
     padding: 5px;
+    max-height: 400px;
 }
 .preview-image{
     width: 100%;
     height: 100%;
     object-fit: cover;
+    border:1px solid lightgrey;
 }
 .preview-image-column-container{
     width: 50%;
@@ -65,7 +75,33 @@ main{
 }
 .status-container{
     width: 80%;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    justify-items: center;
+    align-items: center;
 }
 .show-container{
     display: flex!important;
+}
+.visibility-select-container {
+    display: flex;
+    align-items: center;
+}
+#status-submit-btn{
+    width: 100px;
+}
+.avatar-align-right-container{
+    display: flex;
+    justify-content: right;
+    margin-right: 30px;
+}
+/* .status-box{
+    width: 70%;
+} */
+.status-header{
+    display: flex;
+    flex-direction: row;
+    margin-top:20px;
+    margin-left: 20px;
 }
