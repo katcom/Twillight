@@ -4,6 +4,7 @@
 
 {% block content %}
     <script src="{% static 'js/handlebars-v4.7.7.js'%}"></script>
+    <link rel="stylesheet" href="{% static 'css/status.css'%}"></script>
 
     <style>
         .status-box{
@@ -52,14 +53,18 @@
     </script>
 {% endverbatim %}
 
+{% include './handlebar_templates/single-status-box-template.html' %}
+
 <script>
         $.ajax(
         {
             type:"GET",
             url:"/api/get-status/{{user_id}}",
             success:function(data){
-                console.log(data)
+                //console.log(data)
                 display_serach_result(data)
+                loadStatusAvatar($('#status-list-container'))
+
             },
             error:function(result){
                 console.log(result.responseText)
@@ -69,12 +74,13 @@
     )
 function display_serach_result(data){
     data_dict ={result:data}
-    console.log(data_dict)
-    var tpl = $("#single-status-box").html()
+    //console.log(data_dict)
+    var tpl = $("#single-status-box-template").html()
     var template = Handlebars.compile(tpl)
     var html = template(data_dict)
     $("#status-list-container").html(html)
-    console.log(html)
+    //console.log(html)
 }
+
 </script>
 {% endblock%}

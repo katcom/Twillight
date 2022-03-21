@@ -1,0 +1,117 @@
+{% extends "pamphlet/base.html" %}
+{%load bootstrap4 %}
+{% load static %}
+
+{% block content %}
+    <style>
+        #settings-form{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 30px;
+        }
+        #avatar-image-preview{
+            width: 100px;
+            height: 100px;
+        }
+        #avatar-image-upload-form{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        #avatar-image-upload-form p{
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin:30px;
+            border-bottom: 1px solid lightgrey;
+        }
+        #avatar-image-upload-form p input[type=file]{
+            display: none;
+
+        }
+        #avatar-image-upload-form p label{
+            margin-top: 20px;
+            margin-bottom: 20px;
+            transform: scale(0.8);
+        }
+    </style>
+    <form id="avatar-image-upload-form" action="/api/upload-avatar/" method="POST" enctype='multipart/form-data'>
+        {% csrf_token %}
+
+        <p>
+            <img id='avatar-image-preview' class="avatar-icon" src="{{user.avatar.avatar_image.url}}">
+            <label class="btn btn-secondary" for="{{ avatar_form.avatar_image.id_for_label }}">Change Avatar</label>
+            {{avatar_form.avatar_image}}
+
+            <input class='btn btn-primary' type="submit" value="Apply">
+        </p>
+    </form>
+    <form id='settings-form' method="POST" action="/api/update-user-settings/">
+        {% csrf_token %}
+        <p>
+            <label for="{{ form.user_custom_name.id_for_label }}">User custom name:</label>
+            {{form.user_custom_name}}
+        </p>
+        <input class='btn btn-primary' type="submit" value="Apply">
+    </form>
+    <script>
+        
+        $("#settings-form").on('submit',function(e){
+            e.preventDefault()
+            console.log('submit')
+            var form = $(this)
+            var actionUrl = form.attr('action')
+            console.log("called")
+            $.ajax(
+                {
+                    type:"POST",
+                    url:actionUrl,
+                    data:form.serialize(),
+                    success:function(data){
+                        alert("Setting Updated Successfully!")
+                    },
+                    error:function(result){
+                        alert(result.responseText)
+                    }
+
+                }
+            )
+        })
+
+        $("#avatar-image-upload-form").on('submit',function(e){
+            e.preventDefault()
+            console.log('submit')
+            var form = $(this)
+            var actionUrl = form.attr('action')
+            console.log("called")
+            var formData = new FormData(this);
+            console.log(formData.entries())
+
+            $.ajax(
+                {
+                    type:"POST",
+                    url:actionUrl,
+                    data:formData,
+                    success:function(data){
+                        alert("Setting Avatar Successfully!")
+                    },
+                    error:function(result){
+                        alert(result.responseText)
+                    },
+                    contentType:false,
+                    cache:false,
+                    processData:false
+                }
+            )
+        })
+
+        $('#{{ avatar_form.avatar_image.id_for_label }}').on('change',function(e){
+            //$('#avatar-image-upload-form').trigger('submit')
+            input = e.currentTarget
+            src = URL.createObjectURL(input.files[0])
+            $('#avatar-image-preview').attr('src',src)
+        });
+    </script>
+{% endblock %}

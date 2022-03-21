@@ -51,6 +51,12 @@ class UserSearchResult(serializers.ModelSerializer):
         model = FacePamphletUser
         fields = ['user_custom_name','user_id']
 
+
+class UserCustomNameSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FacePamphletUser
+        fields = ['user_custom_name']
+
 class StatusEntrySerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -105,6 +111,10 @@ class StatusEntryImageSerializer(serializers.ModelSerializer):
         fields=['image_file','description']
 class CurrentUserStatusSerializer(serializers.ModelSerializer):
     images = StatusEntryImageSerializer(many=True,read_only=True)
+    user_id = serializers.CharField(source='user.username')
+    user_custom_name = serializers.CharField(source='get_user_custom_name')
     class Meta:
         model=StatusEntry
-        fields=['text_content','visibility','last_edited','images']
+        fields=['user_id','user_custom_name','text_content','visibility','creation_date','last_edited','images',]
+
+

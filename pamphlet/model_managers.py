@@ -28,6 +28,13 @@ class FriendshipManager(models.Manager):
 
         ValidUnilateralFriendship.objects.create(friendship=friendship_me_to_friend)
         ValidUnilateralFriendship.objects.create(friendship=friendship_friend_to_me)
+    def get_mutual_friends(self,user):
+        friends=[]
+        friendships = UnilateralFriendship.objects.filter(user=user)
+        for friendship in friendships:
+            if UnilateralFriendship.objects.filter(user=friendship.friend,friend=user).exists():
+                friends.append(friendship.friend)
+        return friends
 class PrivateChatRoomManager(models.Manager):
     def create(self,user_1,user_2):
         user1 = User.objects.filter(username=user_1)

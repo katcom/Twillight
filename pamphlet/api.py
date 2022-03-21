@@ -1,11 +1,12 @@
 
 from asyncore import file_wrapper
 from datetime import datetime
+from multiprocessing import managers
 import re
 import pdb; 
 from django.forms import ValidationError
 from .utils import *
-from .forms import StatusEntryImageForm
+from .forms import AvatarForm, StatusEntryImageForm, UserSettingForm
 from .models import *
 from rest_framework import status
 from rest_framework.response import Response
@@ -29,6 +30,7 @@ def register(request):
             #f_user = f_user_serializer.save()
             manger = UserManager() 
             f_user = manger.create(username=user_query['username'],user_custom_name=f_user_query['user_custom_name'],password=user_query['password'])
+            AvatarEntry.objects.create(user=f_user.user)
             return Response(f_user_serializer.data,status=status.HTTP_201_CREATED)
         else:
             return Response(f_user_serializer.errors,status=status.HTTP_400_BAD_REQUEST)
@@ -216,8 +218,51 @@ def get_current_user_status(request):
         return Response("Unauthorized! No user logged in!",status=status.HTTP_401_UNAUTHORIZED)
     try:
 
-        record = StatusEntry.objects.filter(user=request.user,isDeleted=False);
+        record = StatusEntry.objects.filter(user=request.user,isDeleted=False).order_by('-last_edited');
         serializer = CurrentUserStatusSerializer(record,many=True)
         return Response(serializer.data,status=status.HTTP_200_OK)
     except Exception as e :
         return Response(json.dumps(str(e)),status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+def update_user_settings(request):
+    # queryset = request.POST.copy()
+    # queryset['user_id'] = request.user.username 
+    form = UserSettingForm(request.POST,instance=request.user.face_pamphlet_account)
+    if form.is_valid():
+        form.save()
+        return Response(status=status.HTTP_200_OK)
+    else:
+        return Response(form.errors,status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+def get_user_avatar(request,user_id):
+    user = User.objects.filter(username=user_id)
+    if not user:
+        return Response("ERROR! User does not exist!!",status=status.HTTP_400_BAD_REQUEST)
+    img_url = user[0].avatar.avatar_image.url
+    data_dict = {'url':img_url}
+    return Response(data_dict,status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+def get_friends_status(request):
+    try:
+        all_status = []
+        manager = FriendshipManager()
+        friends=manager.get_mutual_friends(user=request.user)
+        print(friends)
+        record = StatusEntry.objects.filter(user__in=friends,isDeleted=False,visibility__in=[Visibility.FRIENDS_ONLY_VIEW,Visibility.PUBLIC_VIEW]).order_by('-creation_date');
+        serializer = CurrentUserStatusSerializer(record,many=True)
+        return Response(serializer.data,status=status.HTTP_200_OK)
+    except Exception as e :
+        print(e)
+        return Response(json.dumps(str(e)),status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+def upload_avatar(request):
+    form = AvatarForm(request.POST,request.FILES,instance=request.user.avatar)
+    print(request.FILES)
+    if form.is_valid():
+        form.save()
+        return Response(status=status.HTTP_200_OK)
+    return Response(form.errors,status=status.HTTP_400_BAD_REQUEST)

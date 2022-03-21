@@ -3,7 +3,7 @@ from django.urls import path
 from . import api
 from django.contrib.auth.decorators import login_required
 urlpatterns = [ 
-    path('',views.index,name='index'),
+    path('',views.user_home,name='index'),
     path('login/',views.user_login,name='login'),
     path('logout/',views.user_logout,name='logout'),
     path('register/',views.user_register,name='register'),
@@ -12,7 +12,8 @@ urlpatterns = [
     path('search-users/',views.search_user,name='register'),
     path('friend-request/',views.friend_request,name="friend_request"),
     path('friend-list/',views.friend_list,name="friend_request"),
-
+    path('private-chat-room/<str:friend_id>/',login_required(login_url='/login/')(views.private_chat_room),name='room'),
+    path('settings/',login_required(login_url='/login/')(views.user_settings),name='user_settings'),
     path('api/login/',api.login,name="api-login"),
     path('api/register/',api.register,name='api-register'),
     path('api/logout/',api.logout,name='api-logout'),
@@ -24,8 +25,11 @@ urlpatterns = [
     path('api/respond-friend-request/',api.respond_friend_request,name="respond_friend_request"),
     path('api/get-friends-list/',api.get_friends_list,name="get_friend_list"),
     path('api/get-current-user-status/',api.get_current_user_status,name="get_friend_list"),
+    path('api/update-user-settings/',api.update_user_settings,name="update_user_settings"),
+    path('api/get-user-avatar/<str:user_id>',api.get_user_avatar,name="get-user-avatar"),
+    path('api/get-friends-status/',login_required(login_url='/login/')(api.get_friends_status),name="get-friends-status"),
+    path('api/upload-avatar/',login_required(login_url='/login/')(api.upload_avatar),name="get-friends-status"),
 
     # path('<str:room_name>/',login_required(login_url='/login/')(views.room),name='room'),
-    path('private-chat-room/<str:friend_id>/',login_required(login_url='/login/')(views.private_chat_room),name='room'),
 
 ]

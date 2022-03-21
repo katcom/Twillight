@@ -15,3 +15,6 @@ def getStatusFilePathByUsername(instance,filename):
     return "{}/status_images/{}".format(instance.status_entry.user.username,filename)
 def getUserAppDataDirectory(username):
     pass
+def getAvatarFilePathByUsername(instance,filename):
+    return "{}/avatar_image/{}".format(instance.user.username,filename)
+

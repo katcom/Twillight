@@ -1,0 +1,59 @@
+{% verbatim %}
+<script type="text/template" id="single-status-box-template">
+    {{#each result}}
+
+                    <div class="row status-box" >
+                        <div class="col-12 status-header" > 
+                            <div class=" avatar-align-right-container ">
+                                    <img class="avatar-icon" alt="profile" value='{{user_id}}'>
+                            </div>
+                            <div class="">
+                                <a>{{user_custom_name}}</a>
+                                <p class="date-info">Last edited: {{last_edited}}</p>
+
+                            </div>
+                        </div>
+                            <div class="col-12 row container justify-content-center">
+                                <div class="col-8 col-sm-8 col-md-8 col-lg-8 col-xl-10" >
+                                    <!-- <div class="col-8 col-sm-8 col-md-8 col-lg-8 col-xl-9" > -->
+                                    <div class="">
+                                            <div class=" container">
+                                                <div class="row status-text" >
+                                                    <p>
+
+                                                    {{text_content}}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                    </div>
+                                    <div class="image-preview-container show-container">
+                                        <div  class="preview-image-column-container left-column-container">
+                                            {{#each images}}
+                                            <div class="img-box" >
+                                                <img class="preview-image rounded" src="{{image_file}}" alt="image-3">
+        
+                                            </div>
+                                            {{/each}}
+
+                                        </div>
+                                        <div class="preview-image-column-container right-column-container">
+                                            
+        
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                           
+                            <div style="display: flex;flex-direction: row;justify-content: space-around;">
+                                <button class="btn"><i class="fa-regular fa-comment"></i></button>
+
+                                <button class="btn"><i class="fa-regular fa-heart"></i></button>
+                                <button class="btn"> <i class="fa-solid fa-share"></i></button>
+
+
+                            </div>
+                        </div>
+                        {{/each}}
+</script>
+{% endverbatim %}

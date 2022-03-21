@@ -1,0 +1,47 @@
+{% extends "pamphlet/base.html" %}
+{%load bootstrap4 %}
+
+{% block content %}
+    <style>
+        .status-box{
+            border-width: 1px;
+            border-color: lightgrey;
+            border-style: none none solid none;
+            background-color: white;
+        }
+        main{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .status-container{
+            width: 80%;
+        }
+    </style>
+    
+        <div class="status-container container justify-content-center">
+            {% for entry in status_list %}
+
+            <div class="row">
+                    <div class="status-box col-9 col-sm-10 col-md-11">
+                        <div class="row">
+                                <div class=" container">
+                                    <div class="row" >
+                                        {{entry.text_content}}
+                                    </div>
+                                </div>
+                            
+                        </div>
+                        <div class="row">
+                            {% if entry.creation_date == entry.last_edited %}
+                                {{entry.creation_date}}
+                            {% else %}
+                                <p>Last edited: {{entry.last_edited}}</p>
+                            {%endif%}
+                        </div>
+                    </div>
+
+            </div>
+            {%endfor%}
+        </div>
+{% endblock%}

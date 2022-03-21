@@ -155,6 +155,9 @@
                 'message': message
             }));
             messageInputDom.value = '';
+            $('#text-input-container .emoji-wysiwyg-editor').empty()
+            $("#chat-log-container").animate({ scrollTop: $('#chat-log-container').prop("scrollHeight") }, 1000);
+
         };
         
         function add_message_box(data){

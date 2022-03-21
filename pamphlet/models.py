@@ -1,4 +1,5 @@
 from argparse import ONE_OR_MORE
+from distutils.command.upload import upload
 from pickle import TRUE
 import profile
 from django.db import models
@@ -6,10 +7,10 @@ from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
 import uuid
 
-from pamphlet.utils import getStatusFilePathByUsername
+from pamphlet.utils import getStatusFilePathByUsername,getAvatarFilePathByUsername
 # Create your models here.
 class FacePamphletUser(models.Model):
-    user = models.OneToOneField(User,on_delete=models.CASCADE)
+    user = models.OneToOneField(User,on_delete=models.CASCADE,related_name="face_pamphlet_account")
     user_custom_name = models.CharField(max_length=256,unique=False,blank=False,null=False)
     def __str__(self):
         return self.user.username
@@ -60,6 +61,8 @@ class StatusEntry(models.Model):
     last_edited = models.DateTimeField(auto_now=True,
                                 blank=True,
                                 null=False)
+    def get_user_custom_name(self):
+        return FacePamphletUser.objects.get(user=self.user).user_custom_name
 
 class FriendRequestEntry(models.Model):
     user = models.ForeignKey(User,on_delete=models.DO_NOTHING,related_name="friend_requests")
@@ -115,3 +118,7 @@ class StatusEntryImage(models.Model):
     image_file = models.ImageField(blank=True,null=TRUE,upload_to=getStatusFilePathByUsername)
     thumbnail = models.ImageField(null=True)
     description = models.CharField(max_length=128,null=True,blank=True,default="")
+
+class AvatarEntry(models.Model):
+    user = models.OneToOneField(User,on_delete=models.DO_NOTHING,related_name='avatar')
+    avatar_image = models.ImageField(null=True,blank=True,upload_to=getAvatarFilePathByUsername,default="images/defaults/default-avatar-alien.png")

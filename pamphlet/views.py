@@ -1,5 +1,7 @@
 from django.shortcuts import render
 
+from pamphlet.forms import AvatarForm, UserSettingForm
+
 from .serializers import *
 from .model_managers import *
 from .models import *
@@ -28,7 +30,7 @@ def search_user(request):
 
 def user_home(request):
     status = request.user.status.all()
-    return render(request,'pamphlet/user_home.html',{"status_list":status,'f_user':FacePamphletUser.objects.get(user=request.user)})
+    return render(request,'pamphlet/index.html',{"status_list":status,'f_user':FacePamphletUser.objects.get(user=request.user)})
 
 def user_profile(request,user_id):
     return render(request,'pamphlet/user_profile.html',{"user_id":user_id})
@@ -57,3 +59,9 @@ def private_chat_room(request,friend_id):
         })
     except Exception as e:
         print('err:',e)
+
+def user_settings(request):
+    avatar_form = AvatarForm()
+    fp_user = FacePamphletUser.objects.get(user=request.user)
+    form = UserSettingForm(instance=fp_user)
+    return render(request,'pamphlet/settings.html',{'form':form,'fp_user':fp_user,'avatar_form':avatar_form})

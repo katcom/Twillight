@@ -33,3 +33,10 @@ $("#logout-button").on('click',function(e){
 
     })
 })
+
+$('#header-search-btn').on('click',function(e){
+    console.log('clickfukx')
+    window.location.href=`/search-users/?clicked=true&keyword=${$('#header-search-input').val()}`
+});
+
+

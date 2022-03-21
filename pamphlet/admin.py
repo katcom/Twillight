@@ -8,3 +8,4 @@ admin.site.register(UnilateralFriendship)
 
 admin.site.register(ValidUnilateralFriendship)
 admin.site.register(StatusEntryImage)
+admin.site.register(AvatarEntry)
