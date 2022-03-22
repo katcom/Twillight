@@ -16,20 +16,22 @@
 
     <script src="{% static 'js/handlebars-v4.7.7.js'%}"></script>
     <link  rel="stylesheet" href="{% static 'emoji-picker-main/lib/css/emoji.css'%}">
+    <link  rel="stylesheet" href="{% static 'css/style.css'%}">
 
     <style>
         .my-message-box{
-            width: 50%;
             background-color: lightgreen;
             border-style: solid;
             border-width: 1px;
             border-color: lightblue;
             padding:20px 10px 20px 15px;
             word-wrap: break-word;
-            
+            width: fit-content;
+            max-width: 50%;
         }
         .incoming-message-box{
-            width: 50%;
+            width: fit-content;
+            max-width: 50%;
             padding:10px;
             background-color: white;
             border-style: solid;
@@ -52,11 +54,12 @@
         #input-container{
             background-color: whitesmoke;
         }
-        #emoji-button{
+        #add-button{
             background:none;
             border: none;
             padding: 0 0 0 0;
             margin: 0 0 0 0;
+            color: cornflowerblue ;
         }
         /* #emoji-button i{
             position: absolute;
@@ -98,6 +101,15 @@
         .form-control:focus{
             box-shadow: none!important;
         }
+        .emoji-menu{
+            transform: translateY(-150%);
+            width: 50%;
+        }
+        .emoji-picker{
+            font-size: 30px;
+            transform: translateY(140%);
+        }
+
     </style>
     <!-- <textarea id="chat-log" cols="100" rows="20"></textarea><br> -->
     <div id="chat-log-container" class="container">
@@ -106,7 +118,7 @@
     <div class="container " id="input-container">
         <div class="row justify-content-center">
             <div id="text-input-container" class="col-10 rounded">
-                <button id="emoji-button"><i class="far fa-grin"></i></button>
+                <button id="add-button"><i class="fa-solid fa-circle-plus"></i></button>
                 <p class="lead emoji-picker-container">
 
                 <textarea class="form-control textarea-control" id="chat-message-input" type="text"  data-emojiable="true"></textarea><br>
@@ -164,6 +176,7 @@
             if (data.message_direction == 'incoming'){
                 var tpl = $("#single-incoming-message-box").html()
             }else{
+                data.avatar_url="{{user.avatar.avatar_image.url}}"
                 var tpl = $("#single-outgoing-message-box").html()
             }
             var template = Handlebars.compile(tpl)
@@ -180,7 +193,7 @@
                 {{message}}
             </div>
             <div class="col-1">
-                <img alt="profile">
+                <img class='avatar-icon' src="{{avatar_url}}" alt="profile">
             </div>
         </div>
     </script>

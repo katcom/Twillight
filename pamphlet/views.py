@@ -30,7 +30,7 @@ def search_user(request):
 
 def user_home(request):
     status = request.user.status.all()
-    return render(request,'pamphlet/index.html',{"status_list":status,'f_user':FacePamphletUser.objects.get(user=request.user)})
+    return render(request,'pamphlet/user_home.html',{"status_list":status,'f_user':FacePamphletUser.objects.get(user=request.user)})
 
 def user_profile(request,user_id):
     return render(request,'pamphlet/user_profile.html',{"user_id":user_id})
@@ -40,14 +40,7 @@ def friend_request(request):
     return render(request,'pamphlet/notification.html',{"request_list":friend_req_list})
 
 def friend_list(request):
-    # friends_record_list = UnilateralFriendshipRecord.objects.filter(is_deleted=False)
-    # friends_list = []
-    # for entry in friends_record_list:
-    #     friend =  FacePamphletUser.objects.get(user=entry.friendship.friend)
-    #     friends_list.append(friend)
-    # serializer = FriendSerializer(friends_list,many=True)
-    # print(serializer.data)
-    return render(request,'pamphlet/friends_status.html')
+    return render(request,'pamphlet/friends.html')
 
 def private_chat_room(request,friend_id):
     try:
@@ -65,3 +58,6 @@ def user_settings(request):
     fp_user = FacePamphletUser.objects.get(user=request.user)
     form = UserSettingForm(instance=fp_user)
     return render(request,'pamphlet/settings.html',{'form':form,'fp_user':fp_user,'avatar_form':avatar_form})
+
+def friends_status(request):
+    return render(request,'pamphlet/friends_status.html')

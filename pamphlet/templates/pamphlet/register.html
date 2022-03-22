@@ -4,30 +4,36 @@
 
 {% block content %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/register.css'%}">
-    <h1>Create an account</h1>
-    <div id="input-container" class="container" >
-        <form id="register-form" class="row" action="/api/register/" method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            <label class="col">Nick Name</label>
-            <input class="col" id="username-input" name="username" type="text" hint="Enter a username">
-            <div class="w-100"></div>
-
-            <label class="col">Username</label>
-            <input class="col" id="userid-input" name="user_id" type="text" hint="Enter a unique id">
-            <div class="w-100"></div>
-
-            <label class="col" >Password</label>
-            <input type="password" class="col" id="password-one-input" name="password" type="text">
-            <div class="w-100"></div>
-
-            <label class="col" >Confirm Password</label>
-            <input type="password" class="col" id="password-two-input" name="" type="text">      
-            <div class="w-100"></div>
-
-            <div class="col" ></div>
-            <input id="register-button " class="col  btn btn-primary" type="submit" value="Register">
-            <div class="col" ></div>
-        </form>
+    <div style="width: 100%; display: flex;justify-content: center;align-items: center;height: 100%;">
+        <div class="bg-light rounded col-10" style="display: flex;justify-content: center;align-items: center;flex-direction: column;">
+            <h1>Create an account</h1>
+            <div id="input-container" class="container" >
+                <form id="register-form" class="row" action="/api/register/" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <label class="col">Nick Name</label>
+                    <input class="col" id="username-input" name="username" type="text" hint="Enter a username">
+                    <div class="w-100"></div>
+        
+                    <label class="col">Username</label>
+                    <input class="col" id="userid-input" name="user_id" type="text" hint="Enter a unique id">
+                    <div class="w-100"></div>
+        
+                    <label class="col" >Password</label>
+                    <input type="password" class="col" id="password-one-input" name="password" type="text">
+                    <div class="w-100"></div>
+        
+                    <label class="col" >Confirm Password</label>
+                    <input type="password" class="col" id="password-two-input" name="" type="text">      
+                    <div class="w-100"></div>
+        
+                    <div class="col" ></div>
+                    <input id="register-button " class="col  btn btn-primary" type="submit" value="Register">
+                    <div class="col" ></div>
+                </form>
+            </div>
+        </div>
     </div>
+   
+    
     <script src="{% static 'js/register.js'%}"></script>
 {% endblock%}

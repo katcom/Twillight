@@ -1,165 +1,47 @@
 {% extends "pamphlet/base.html" %}
 {%load bootstrap4 %}
-{% load static %}
 
 {% block content %}
-    <link rel="stylesheet" href="{% static 'css/user_home.css'%}"></script>
-    <link rel="stylesheet" href="{% static 'css/status.css'%}"></script>
-
-    <h1>Hello {{user.username}}</h1>
-    <script src="{% static 'js/handlebars-v4.7.7.js'%}"></script>
     <style>
-
+        .status-box{
+            border-width: 1px;
+            border-color: lightgrey;
+            border-style: none none solid none;
+            background-color: white;
+        }
+        main{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .status-container{
+            width: 80%;
+        }
     </style>
+    
+        <div class="status-container container justify-content-center">
+            {% for entry in status_list %}
 
-    <!-- <div id="create-status-container" class="col-12 col-sm-12 col-md-10 col-lg-8 col-xl-5"> -->
-        <div id="create-status-container" class="container">
+            <div class="row">
+                    <div class="status-box col-9 col-sm-10 col-md-11">
+                        <div class="row">
+                                <div class=" container">
+                                    <div class="row" >
+                                        {{entry.text_content}}
+                                    </div>
+                                </div>
+                            
+                        </div>
+                        <div class="row">
+                            {% if entry.creation_date == entry.last_edited %}
+                                {{entry.creation_date}}
+                            {% else %}
+                                <p>Last edited: {{entry.last_edited}}</p>
+                            {%endif%}
+                        </div>
+                    </div>
 
-        <div class="avatar-align-right-container">
-                <img class="avatar-icon" alt="profile" src="{{user.avatar.avatar_image.url}}">
+            </div>
+            {%endfor%}
         </div>
-
-            <div id="create-status-form-container" class="col-11 col-sm-11 col-md-8 col-lg-6">
-
-                <form id="create-status-form" class=" " action="/api/create-status/" method="POST" enctype="multipart/form-data">
-                    <input type="file" hidden>
-                    {% csrf_token %}
-                    <div class="row justify-content-center">
-                        <textarea class="row" row="5"  name="text_content" placeholder="Share your ideas with your friends!" id="status-text-input"></textarea>
-                    </div>
-                    <div class="image-preview-container" id="create-status-image-preview-container">
-                        <div id="image-preview-left-column" class="preview-image-column-container">
-
-                        </div>
-                        <div id="image-preview-right-column" class="preview-image-column-container">
-
-                        </div>
-                    </div>
-                    <div id="status-panel">
-                        <div >
-                            <label  id="file-upload-label">
-                                <i class="fas fa-image" style="cursor: pointer;color: blue;"></i>
-                            </label>
-                            <input name="img_1" class="file-upload-input" id="img_1" type="file" style="display: none;"/>
-                            <input name="img_2" class="file-upload-input" id="img_2" type="file" style="display: none;"/>
-                            <input name="img_3" class="file-upload-input" id="img_3" type="file" style="display: none;"/>
-                            <input name="img_4" class="file-upload-input" id="img_4" type="file" style="display: none;"/>
-
-                        </div>
-                        <div class="visibility-select-container">
-                            <label for="visibility-select" class="">Visibility:</label>
-
-                            <select id="visibility-select" name="visibility" style="margin-left: 10px;" class="form-select">
-                                <option value="PRI"> Only Me </option>
-                                <option value="FRI"> Only Friends </option>
-                                <option value="PUB"> All People </option>
-                                
-                            </select>
-                        </div>
-
-                        <div class=" justify-content-center" > 
-                            <input  class=" btn btn-primary rounded-pill" id="status-submit-btn" type="submit" value="OK">
-                        </div>
-                    </div>
-                    
-                </form>
-            </div>
-
-    </div>  
-
-            <div id="status-container" class="status-container container justify-content-center">
-                
-            </div>
-{% verbatim %}
-<script type="text/template" id="single-input-img-box">
-    <div class="img-box" value="{{tag}}">
-        <span class="delete-image-btn-wrapper">
-            <i class="fa-solid fa-circle-xmark delete-image-btn" style="position: absolute;z-index:3">
-                <i class="fas fa-square" style="color: white;width: 5px;position: absolute;transform: scale(0.6) translate(-22px);z-index: -1;"></i>            </i>
-        </span>
-        <img class='preview-image rounded' src="{{img}}">
-        <input hidden name=>
-    </div>
-</script>
-{% endverbatim %}
-
-
-{% include './handlebar_templates/single-status-box-template.html' %}
-
-<script src="{% static 'js/user_home.js'%}"></script>
-<script>
-    $("#create-status-form").on('submit',function(e){
-    e.preventDefault()
-    var form = $(this)
-    var actionUrl = form.attr('action')
-    console.log("called")
-    var formData = new FormData(this);
-    $.ajax(
-        {
-            type:"POST",
-            url:actionUrl,
-            data:formData,
-            success:function(data){
-                alert("Status Created Successfully!")
-                console.log(data)
-            },
-            error:function(result){
-                alert("Something wrong")
-
-                console.log(result.responseText)
-            },
-            contentType:false,
-            cache:false,
-            processData:false
-        }
-    )
-})
-
-$.ajax(
-        {
-            type:"GET",
-            url:"/api/get-current-user-status/",
-            success:function(data){
-                console.log("Get Status Successfully!")
-                console.log(data)
-                display_status(data)
-                adjust_status_image_layout()
-                loadStatusAvatar($('#status-container'))
-
-            },
-            error:function(result){
-                console.log("Something wrong")
-
-                console.log(result.responseText)
-            },
-            contentType:false,
-            cache:false,
-            processData:false
-        }
-)
-
-function display_status(data){
-    data_dict ={result:data}
-    var tpl = $("#single-status-box-template").html()
-    var template = Handlebars.compile(tpl)
-    var html = template(data_dict)
-    $("#status-container").html(html)
-}
-function adjust_status_image_layout(){
-    $("#status-container .image-preview-container").each(function(){
-        left_children_count = $(this).find(".left-column-container").children().length
-        // console.log( $(this).find(".left-column-container").children('.img-box')[0].remove())
-        if(left_children_count>2){
-            while (left_children_count>2){
-                var el = $(this).find(".left-column-container").children('.img-box')[0].cloneNode(true)
-                $(this).find(".right-column-container").append(el)
-                $(this).find(".left-column-container").children('.img-box')[0].remove()
-                left_children_count-=1;
-            }
-        }
-    })
-}
-
-</script>
-
 {% endblock%}

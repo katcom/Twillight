@@ -4,60 +4,27 @@
 
 {% block content %}
     <script src="{% static 'js/handlebars-v4.7.7.js'%}"></script>
+    <script src="{% static 'js/status.js'%}"></script>
 
-    <style>
-        .status-box{
-            border-width: 1px;
-            border-color: lightgrey;
-            border-style: none none solid none;
-            background-color: white;
-        }
-        main{
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .friends-container{
-            width: 80%;
-        }
-    </style>
-    
-        <div id="friends-list-container"class="friends-container container justify-content-center">
+    <link rel="stylesheet" href="{% static 'css/status.css'%}"></script>
+
+        <div id="status-container"class="status-container container justify-content-center">
         </div>
 
-    {% verbatim %}
-        <script type="text/template" id="single-friend-box">
-            {{#each result}}
-    
-                <div class="row">
-                        <div class="friend-box col-9 col-sm-10 col-md-11" >
-                            <div class="row">
-                                    <div class=" container">
-                                        <div class="row" >
-                                            {{user_custom_name}}
-                                        </div>
-                                        <button class='btn btn-primary' onclick="chat_with_friend('{{user_id}}')">Chat</button>
-                                    </div>
-                                    
-                            </div>
-                            <div class="row">
-                                    <p class="date-info">{{user_id}}</p>
-                            </div>
-                        </div>
-    
-                </div>
-            {{/each}}
-        </script>
-    {% endverbatim %}
+        {% include './handlebar_templates/single-status-box-template.html' %}
+
 
 <script>
     $.ajax(
         {
             type:"GET",
-            url:"/api/get-friends-list/",
+            url:"/api/get-friends-status/",
             success:function(data){
-                console.log(data)
+                console.log('get friend status')
                 display_serach_result(data)
+                loadStatusAvatar($('#status-container'))
+                setupLikeButtons()
+
             },
             error:function(result){
                 console.log(result.responseText)
@@ -67,16 +34,13 @@
     )
     function display_serach_result(data){
         data_dict ={result:data}
-        console.log(data_dict)
-        var tpl = $("#single-friend-box").html()
+        //console.log(data_dict)
+        var tpl = $("#single-status-box-template").html()
         var template = Handlebars.compile(tpl)
         var html = template(data_dict)
-        $("#friends-list-container").html(html)
+        $("#status-container").html(html)
+        //console.log(html)
+    }
 
-        
-    }
-    function chat_with_friend(friend_id){
-        window.location.href="/private-chat-room/"+friend_id+"/"
-    }
 </script>
 {% endblock%}

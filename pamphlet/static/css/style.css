@@ -8,11 +8,17 @@ body{
     flex-direction: column;
     justify-content: center;
     height: 100%;
+    align-items: center;
+    background-color: lightskyblue;
+}
+#wrapper{
+    width: 90%;
 }
 main {
     width: 100%!important;
     align-self: center;
-    background-color: rgb(224, 246, 253);
+    /* background-color: rgb(224, 246, 253); */
+    background-color: black;
     height: 100%;
     overflow: scroll;
 }
@@ -20,7 +26,7 @@ main {
     width: 100%;
 }
 .date-info{
-    color: grey;
+    color: rgb(78, 78, 78);
 }
 .icon-span{
     width: 25px;
@@ -49,4 +55,27 @@ main {
 }
 .show-container{
     display: flex!important;
+}
+.logo{
+    width: 35px;
+    margin: 10px;
+}
+#sidebar-heading{
+    font-size: 20px !important;
+    color: lightskyblue;
+    display: flex;
+
+}
+#navbarSupportedContent{
+    justify-content: end;
+}
+#navbarSupportedContent>*{
+    margin-right: 10px;
+}
+
+.like-button-heart{
+    margin-right: 5px;
+}
+.font-color-red{
+    color: red;
 }

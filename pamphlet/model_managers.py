@@ -19,15 +19,12 @@ class UserManager(models.Manager):
 
 class FriendshipManager(models.Manager):
     def create(self,user_1,user_2):
-        if ValidUnilateralFriendship.objects.filter(friendship__user=user_1,friendship__friend = user_2).exists() or \
-                ValidUnilateralFriendship.objects.filter(friendship__user=user_2,friendship__friend=user_1).exists():
+        if UnilateralFriendship.objects.filter(user=user_1,friend = user_2).exists() or \
+                UnilateralFriendship.objects.filter(user=user_2,friend=user_1).exists():
             raise ValidationError("{} is already a friend of {}".format(user_1,user_2))
         creation_record = FriendshipCreationRecord.objects.create()
         friendship_me_to_friend = UnilateralFriendship.objects.create(user=user_1,friend=user_2,creation_record=creation_record)
         friendship_friend_to_me = UnilateralFriendship.objects.create(user=user_2,friend=user_1,creation_record=creation_record)
-
-        ValidUnilateralFriendship.objects.create(friendship=friendship_me_to_friend)
-        ValidUnilateralFriendship.objects.create(friendship=friendship_friend_to_me)
     def get_mutual_friends(self,user):
         friends=[]
         friendships = UnilateralFriendship.objects.filter(user=user)

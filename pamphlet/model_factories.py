@@ -13,12 +13,17 @@ class FacePamphletUserFactory(factory.django.DjangoModelFactory):
     user = factory.SubFactory(UserFactory)
     class Meta:
         model = FacePamphletUser
+
 class StatusEntryFactory(factory.django.DjangoModelFactory):
     text_content="Hello World. Have a good day!"
     user = factory.SubFactory(UserFactory)
     visibility = Visibility.PUBLIC_VIEW
     class Meta:
         model = StatusEntry
+class StatusImageFactory(factory.django.DjangoModelFactory):
+    image_file = factory.django.ImageField(width=1024, height=768)
+    class Meta:
+        model = StatusEntryImage
 class FriendRequestFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = FriendRequestEntry

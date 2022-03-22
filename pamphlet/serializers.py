@@ -82,24 +82,6 @@ class FriendRequestResponseSerializer(serializers.ModelSerializer):
         model = FriendRequestEntry
         fields=['is_accepted']
 
-# class ValidUnilateralFriendshipSerializer(serializers.ModelSerializer):
-
-#     class Meta:
-#         model = UnilateralFriendshipRecord
-#         fields=['friendship']
-#     def validate_friendship(self,value):
-#         if UnilateralFriendshipRecord.objects.filter(friendship__user=value.user,friendship__friend=value.friend).exist():
-#             raise serializers.ValidationError('Relationship already exists')
-
-
-# class UnilaternalFriendRecordshipSerializer(serializers.ModelSerializer):
-#     user = models.CharField(source='UnilateralFriendship.user')
-#     user = models.CharField(source='UnilateralFriendship.user')
-
-#     class Meta:
-#         model = UnilateralFriendship
-#         fields=['user','friend']
-
 class FriendSerializer(serializers.ModelSerializer):
     user_id = serializers.CharField(source='user.username')
     class Meta:
@@ -113,8 +95,32 @@ class CurrentUserStatusSerializer(serializers.ModelSerializer):
     images = StatusEntryImageSerializer(many=True,read_only=True)
     user_id = serializers.CharField(source='user.username')
     user_custom_name = serializers.CharField(source='get_user_custom_name')
+    likes_num = serializers.SerializerMethodField('get_likes_num')
+    is_liked = serializers.SerializerMethodField('get_is_liked')
+
+    def get_likes_num(self, instance):
+        return instance.likes.all().count()
+    def get_is_liked(self,instance):
+        request = self.context['request']
+        if not request.user.is_authenticated:
+            return False
+        return instance.likes.filter(user=request.user).exists()
     class Meta:
         model=StatusEntry
-        fields=['user_id','user_custom_name','text_content','visibility','creation_date','last_edited','images',]
+        fields=['pk','user_id','user_custom_name','text_content','visibility','creation_date','last_edited','images','likes_num','is_liked']
+
+class UserStatusSerializer(serializers.ModelSerializer):
+    images = StatusEntryImageSerializer(many=True,read_only=True)
+    user_id = serializers.CharField(source='user.username')
+    user_custom_name = serializers.CharField(source='get_user_custom_name')
+    is_liked = serializers.SerializerMethodField('get_is_liked')
+    def get_is_liked(self,instance):
+        request = self.context['request']
+        if not request.user.is_authenticated:
+            return False
+        return instance.likes.filter(user=request.user).exists()
+    class Meta:
+        model=StatusEntry
+        fields=['pk','user_id','user_custom_name','text_content','visibility','creation_date','last_edited','images','is_liked']
 
 

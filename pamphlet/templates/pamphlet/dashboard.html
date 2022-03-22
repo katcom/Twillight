@@ -66,12 +66,14 @@
   </nav>
   <script src="{% static 'js/title.js'%}"></script> -->
 
-    <div class="sidebar-heading border-bottom bg-light">Start Bootstrap</div>
+    <div id='sidebar-heading'class="sidebar-heading border-bottom bg-dark"><span><img class='logo'src="{% static 'logo.png'%}"></span><h1>Twilight</h1></div>
     <div class="list-group list-group-flush">
+        {% if user.is_authenticated %}
         <a class="list-group-item list-group-item-action list-group-item-light p-3" href="/home"><i class="fa fa-home dashboard-icon"></i>Home </a>
         <a class="list-group-item list-group-item-action list-group-item-light p-3" href="/user/{{user.username}}"><i class="fa-solid fa-circle-user dashboard-icon"></i>Profile</a>
         <a class="list-group-item list-group-item-action list-group-item-light p-3" href="/friend-request"><i class="fa-solid fa-bell dashboard-icon"></i>Notifcations</a>
         <a class="list-group-item list-group-item-action list-group-item-light p-3" href="/friend-list"><i class="fa-regular fa-comment dashboard-icon"></i>Friends <span class="sr-only"></a>
-        <a class="list-group-item list-group-item-action list-group-item-light p-3" href="#!"><span class="icon-span dashboard-icon"><img class="manImg" src="{% static 'icons/eyes-1.png'%}"></img></span>Friends Status</a>
+        <a class="list-group-item list-group-item-action list-group-item-light p-3" href="/friends-status"><span class="icon-span dashboard-icon"><img class="manImg" src="{% static 'icons/eyes-1.png'%}"></img></span>Friends Status</a>
+        {% endif %}
         <a class="list-group-item list-group-item-action list-group-item-light p-3" href="/search-users"><i class="fa-solid fa-magnifying-glass dashboard-icon"></i>Search</a>
       </div>

@@ -1,4 +1,3 @@
-
 {% verbatim %}
 <script type="text/template" id="single-status-box-template">
     {{#each result}}
@@ -48,32 +47,15 @@
                            
                             <div style="display: flex;flex-direction: row;justify-content: space-around;">
                                 <button class="btn"><i class="fa-regular fa-comment"></i></button>
-                                {{#if is_liked }}
-                                    <button type="button"class="btn like-button" is_liked={{is_liked}}><i class="fa-solid fa-heart heart-logo font-color-red"></i><p class='likes-count'>{{likes_num}}</p></button>
-                                {{else}}
-                                    <button type="button" class="btn like-button" is_liked={{is_liked}} ><i class="fa-regular fa-heart heart-logo" ></i><p class='likes-count'>{{likes_num}}</p></button>
-                                {{/if}}
-                                <button class="btn"> <i class="fa-solid fa-share"></i></button>
-                                
-                                <form class="dislike-post-form"  hidden action='/api/dislike-a-post/' method='POST'>
-                                    <input type="text" name="status" value='{{pk}}'>
-                                    <input type="submit"  value='ok'>
-
-                                    {% endverbatim %}
-                                    {% csrf_token %}
-                                </form>
-
-                                {% verbatim %}
-                                <form class="like-post-form" hidden action='/api/like-a-post/' method='POST'>
-                                    <input type="text" name="status" value='{{pk}}' >
-                                    <input type="submit"  value='ok'>
-
                                 {% endverbatim %}
 
-                                        {%csrf_token%}
+                                {% block like_button%}
 
+                                {% endblock %}
                                 {% verbatim %}
-                                </form>
+                                <button class="btn"> <i class="fa-solid fa-share"></i></button>
+
+
                             </div>
                         </div>
                         {{/each}}

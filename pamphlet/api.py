@@ -6,7 +6,7 @@ import re
 import pdb; 
 from django.forms import ValidationError
 from .utils import *
-from .forms import AvatarForm, StatusEntryImageForm, UserSettingForm
+from .forms import AvatarForm, LikeEntryForm, StatusEntryImageForm, UserSettingForm
 from .models import *
 from rest_framework import status
 from rest_framework.response import Response
@@ -189,14 +189,15 @@ def respond_friend_request(request):
 @api_view(['GET'])
 def get_friends_list(request):
     try:
-        friends_record_list = ValidUnilateralFriendship.objects.filter(friendship__user=request.user)
+        friends_record_list = UnilateralFriendship.objects.filter(user=request.user)
         friends_list = []
         for entry in friends_record_list:
-            friend =  FacePamphletUser.objects.get(user=entry.friendship.friend)
+            friend =  FacePamphletUser.objects.get(user=entry.friend)
             friends_list.append(friend)
         serializer = FriendSerializer(friends_list,many=True)
         return Response(serializer.data,status=status.HTTP_200_OK)
-    except:
+    except Exception as e:
+        print(e)
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 # @api_view(['POST'])
@@ -219,7 +220,7 @@ def get_current_user_status(request):
     try:
 
         record = StatusEntry.objects.filter(user=request.user,isDeleted=False).order_by('-last_edited');
-        serializer = CurrentUserStatusSerializer(record,many=True)
+        serializer = CurrentUserStatusSerializer(record,many=True,context={'request':request})
         return Response(serializer.data,status=status.HTTP_200_OK)
     except Exception as e :
         return Response(json.dumps(str(e)),status=status.HTTP_400_BAD_REQUEST)
@@ -247,12 +248,11 @@ def get_user_avatar(request,user_id):
 @api_view(['GET'])
 def get_friends_status(request):
     try:
-        all_status = []
         manager = FriendshipManager()
         friends=manager.get_mutual_friends(user=request.user)
-        print(friends)
+        #print(friends)
         record = StatusEntry.objects.filter(user__in=friends,isDeleted=False,visibility__in=[Visibility.FRIENDS_ONLY_VIEW,Visibility.PUBLIC_VIEW]).order_by('-creation_date');
-        serializer = CurrentUserStatusSerializer(record,many=True)
+        serializer = UserStatusSerializer(record,many=True,context={'request':request})
         return Response(serializer.data,status=status.HTTP_200_OK)
     except Exception as e :
         print(e)
@@ -261,8 +261,40 @@ def get_friends_status(request):
 @api_view(['POST'])
 def upload_avatar(request):
     form = AvatarForm(request.POST,request.FILES,instance=request.user.avatar)
-    print(request.FILES)
+    #print(request.FILES)
     if form.is_valid():
         form.save()
         return Response(status=status.HTTP_200_OK)
     return Response(form.errors,status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+def like_a_post(request):
+    try:
+        form = LikeEntryForm(request.POST)
+        raw_like_entry = form.save(commit=False)
+        if LikesEntry.objects.filter(user=request.user.pk,status=raw_like_entry.status).exists():
+            return Response('User {} already liked this post'.format(raw_like_entry.user),status=status.HTTP_400_BAD_REQUEST)
+        else:
+            raw_like_entry.user = request.user;
+            raw_like_entry.save()
+            form.save()
+            return Response(status=status.HTTP_200_OK)
+    except Exception as e:
+        print(e)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+def dislike_a_post(request):
+    try:
+        print('try')
+        form = LikeEntryForm(request.POST)
+        raw_like_entry = form.save(commit=False)
+        entry = LikesEntry.objects.filter(user=request.user.pk,status=raw_like_entry.status);
+        if not entry.exists():
+            return Response('User has not liked this post before',status=status.HTTP_400_BAD_REQUEST)
+        else:
+            entry[0].delete()
+            return Response(status=status.HTTP_200_OK)
+    except Exception as e:
+        print(e)
+        return Response(status=status.HTTP_400_BAD_REQUEST)

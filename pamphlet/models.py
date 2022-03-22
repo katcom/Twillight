@@ -63,7 +63,8 @@ class StatusEntry(models.Model):
                                 null=False)
     def get_user_custom_name(self):
         return FacePamphletUser.objects.get(user=self.user).user_custom_name
-
+    def __str__(self):
+        return "user:{},visibility:{},text-content:{}".format(self.user,self.visibility,self.text_content)
 class FriendRequestEntry(models.Model):
     user = models.ForeignKey(User,on_delete=models.DO_NOTHING,related_name="friend_requests")
     target = models.ForeignKey(User,on_delete=models.DO_NOTHING)
@@ -88,11 +89,7 @@ class UnilateralFriendship(models.Model):
     def __str__(self):
         return "user:{}, friend:{}, creation_id:{}, creation_date:{}".format(self.user,self.friend,self.creation_record.pk,self.creation_record.creation_date)
 
-class ValidUnilateralFriendship(models.Model):
-    friendship = models.OneToOneField(UnilateralFriendship,
-                                on_delete=models.CASCADE)
-    def __str__(self):
-        return "user:{}, friend:{}".format(self.friendship.user,self.friendship.friend)
+
 # class NotificationType(models.TextChoices):
 #     FRIEND_REQUEST = 'FRI',_('Friend Request')
 #     OTHER_MESSAGE = 'OTE',_('Friend Request')
@@ -122,3 +119,14 @@ class StatusEntryImage(models.Model):
 class AvatarEntry(models.Model):
     user = models.OneToOneField(User,on_delete=models.DO_NOTHING,related_name='avatar')
     avatar_image = models.ImageField(null=True,blank=True,upload_to=getAvatarFilePathByUsername,default="images/defaults/default-avatar-alien.png")
+
+class LikesEntry(models.Model):
+    user = models.ForeignKey(User,related_name='likes',on_delete=models.CASCADE)
+    status = models.ForeignKey(StatusEntry,related_name='likes',on_delete=models.CASCADE)
+    creation_date = models.DateField(auto_now_add=True,editable=False,null=False)
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['user','status'],name="unique like record"),
+        ]
+    def __str__(self):
+        return "user:{},status:{}".format(self.user,self.status)
