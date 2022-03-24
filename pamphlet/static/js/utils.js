@@ -18,3 +18,12 @@ function loadStatusAvatar(container){
         loadUserAvatar(this)
     })
 }
+
+function display_data_on_container_by_template(data,contianer_id,template_id){
+    data_dict ={result:data}
+    console.log(data_dict)
+    var tpl = $(`#${template_id}`).html()
+    var template = Handlebars.compile(tpl)
+    var html = template(data_dict)
+    $(`#${contianer_id}`).html(html)
+}

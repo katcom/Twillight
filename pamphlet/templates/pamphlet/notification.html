@@ -7,76 +7,205 @@
         h1{
             text-align: center;
         }
+        #main{
+            background-color: #fff;
+            height: 100%;
+        }
+        .friend-request-box{
+            background-color: white;
+            width: 100%;
+            border-bottom: 1px solid lightgrey;
+            padding-top: 30px;
+            padding-bottom: 10px;
+            display: flex;
+            justify-content: center;
+        }
+        .accepted_box{
+            border: 1px solid black;
+            padding :0.375rem 0.75rem;
+            color:#198754
+        }
+        .rejected_box{
+            border: 1px solid black;
+            padding :0.375rem 0.75rem;
+            color:rgb(220, 53, 69)
+        }
+        .accept-btn{
+            margin-right: 30px;
+        }
+        h5{
+            display: inline;
+        }
     </style>
-    <h1>Hello {{user.username}}</h1>
-
-    <div class="container justify-content-center">
-        {% for req in request_list %}
-        <form class="row" style="background-color: white; width: 500px;" action="/api/respond-friend-request/" method="POST">
-            {% csrf_token%}
-            <div class="col-12">
-                <label>{{req.user}} wants to be friends with you.</label>
-                <input hidden name="record_id" value="{{req.pk}}">
-            </div>
-            <div class="col-12">
-                <button class="btn accept-btn btn-success">Accept</button>
-                <button class="btn reject-btn btn-light">No, thanks</button>
-                <input class="accept-field" name="is_accepted" value='true' disabled hidden>
-                <input class="reject-field" name="is_accepted" value='false' disabled hidden>
-
-            </div>
-        </form>
-        {% endfor %}
+    <div id="main" class="container col-12 col-sm-12 col-md-10 col-lg-8 col-xl-8" >
+        <ul class="nav nav-pills nav-fill">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="#">Friend Request</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">System Notification</a>
+            </li>
+           
+          </ul>
+    
+        <div id="friend-request-container"class="container justify-content-center">
+    
+        </div>
     </div>
+
+    {% verbatim %}
+    <script type="text/template" id="single-friend-request-box">
+        {{#each result}}
+
+            <div class="friend-request-box">
+                <form class="row col-12 col-sm-12 col-md-10" style="" action="/api/respond-friend-request/" method="POST">
+                    {% endverbatim %}
+                    {% csrf_token %}
+                    {% verbatim %}
+                <div class="col-6">
+                    <label><h5 >{{user_custom_name}}</h5> wants to be friends with you.</label>
+                    <input hidden name="record_id" value="{{pk}}">
+                </div>
+    
+                <div class="col-6 container justify-content-center" style="display:flex">
+                    {{#if is_undetermined }}
+                        <button class="btn accept-btn btn-success">Accept</button>
+                        <button class="btn reject-btn btn-light">No, thanks</button>
+                        <input class="accept-field" name="is_accepted" value='true' disabled hidden>
+                        <input class="reject-field" name="is_accepted" value='false' disabled hidden>
+                    {{else if is_accepted }}
+                        <div class="rounded accepted_box">
+                            accepted
+                        </div>
+                    {{else }}
+                        <div class="rounded rejected_box">
+                            rejected 
+                        </div>               
+                    {{/if}}
+                </div>
+             </form>
+
+            </div> 
+            
+        {{/each}}
+
+    </script>
+    {% endverbatim %}
+
+    <script>
+        $.ajax({
+                type:"GET",
+                url:"/api/get-friend-requests",
+                success:function(data){
+                    console.log(data)
+                    display_data_on_container_by_template(data,'friend-request-container','single-friend-request-box')
+                    setup_accept_buttons()
+                },
+                error:function(result){
+                    console.log(result.responseText)
+                    alert('something wrong')
+                    }
+
+            })
+    </script>
    <script>
-       $(".accept-btn").on('click',function(e){
-           e.preventDefault()
-           form = $(e.currentTarget).closest('form')
-           //console.log(form)
-           actionUrl = form.attr('action')
-           $(form).find('.accept-field').removeAttr('disabled')
-           
-           $.ajax(
-                {
-                    type:"POST",
-                    url:actionUrl,
-                    data:form.serialize(),
-                    success:function(data){
-                        //console.log(data)
-                        alert('accepted')
-                    },
-                    error:function(result){
-                        console.log(result.responseText)
-                        alert('something wrong')
-                    }
+       function setup_accept_buttons(){
+            $(".accept-btn").on('click',function(e){
+            //    e.preventDefault()
+            //    form = $(e.currentTarget).closest('form')
+            //    //console.log(form)
+            //    actionUrl = form.attr('action')
+            //    $(form).find('.accept-field').removeAttr('disabled')
+            
+            //    $.ajax(
+            //         {
+            //             type:"POST",
+            //             url:actionUrl,
+            //             data:form.serialize(),
+            //             success:function(data){
+            //                 //console.log(data)
+            //                 alert('accepted')
+            //             },
+            //             error:function(result){
+            //                 console.log(result.responseText)
+            //                 alert('something wrong')
+            //             }
 
-                }
-            )
-       })
+            //         }
+            //     )
+                e.preventDefault()
+                form = $(e.currentTarget).closest('form')
+                console.log(form)
+                send_accept_request(form)
+        })
 
-       $(".reject-btn").on('click',function(e){
-           e.preventDefault()
-           form = $(e.currentTarget).closest('form')
-           //console.log(form)
-           actionUrl = form.attr('action')
-           $(form).find('.reject-field').removeAttr('disabled')
-           
-           $.ajax(
-                {
-                    type:"POST",
-                    url:actionUrl,
-                    data:form.serialize(),
-                    success:function(data){
-                        //console.log(data)
-                        alert('rejected')
-                    },
-                    error:function(result){
-                        console.log(result.responseText)
-                        alert('something wrong')
-                    }
+        $(".reject-btn").on('click',function(e){
+            //    e.preventDefault()
+            //    form = $(e.currentTarget).closest('form')
+            //    //console.log(form)
+            //    actionUrl = form.attr('action')
+            //    $(form).find('.reject-field').removeAttr('disabled')
+            
+            //    $.ajax(
+            //         {
+            //             type:"POST",
+            //             url:actionUrl,
+            //             data:form.serialize(),
+            //             success:function(data){
+            //                 //console.log(data)
+            //                 alert('rejected')
+            //             },
+            //             error:function(result){
+            //                 console.log(result.responseText)
+            //                 alert('something wrong')
+            //             }
 
-                }
-            )
-       })
+            //         }
+            //     )
+            send_reject_request(e)
+        })
+       }
+       function send_accept_request(form){
+                console.log(form)
+                actionUrl = form.attr('action')
+                $(form).find('.accept-field').removeAttr('disabled')
+                console.log(form.serialize())
+                $.ajax({
+                        type:"POST",
+                        url:actionUrl,
+                        data:form.serialize(),
+                        success:function(data){
+                            //console.log(data)
+                            alert('accepted')
+                        },
+                        error:function(result){
+                            console.log(result.responseText)
+                            alert('something wrong')
+                        }
+                    })
+       }
+       function send_reject_request(e){
+                e.preventDefault()
+                form = $(e.currentTarget).closest('form')
+                //console.log(form)
+                actionUrl = form.attr('action')
+                $(form).find('.reject-field').removeAttr('disabled')
+                
+                $.ajax({
+                            type:"POST",
+                            url:actionUrl,
+                            data:form.serialize(),
+                            success:function(data){
+                                //console.log(data)
+                                alert('rejected')
+                            },
+                            error:function(result){
+                                console.log(result.responseText)
+                                alert('something wrong')
+                            }
+
+                        })
+        }
+       
    </script>
 {% endblock%}

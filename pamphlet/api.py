@@ -166,11 +166,15 @@ def make_friend_request(request):
 @api_view(['POST'])
 def respond_friend_request(request):
     try:
-        #print('CALLED')
-
+        print('CALLED')
+        print('DATA:',request.POST)
         record = FriendRequestEntry.objects.get(pk=request.POST["record_id"])
+        print('record -get')
+
         serializer = FriendRequestResponseSerializer(record,data={"is_accepted":request.POST["is_accepted"]},partial=True)
         if serializer.is_valid():
+            print('valid form')
+
             new_record = serializer.save()
             #print(new_record.user)
 
@@ -181,6 +185,7 @@ def respond_friend_request(request):
             #print('updated')
             return Response(serializer.data,status=status.HTTP_200_OK)
         else:
+            print('invalid form')
             return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
         print(e)
@@ -295,6 +300,29 @@ def dislike_a_post(request):
         else:
             entry[0].delete()
             return Response(status=status.HTTP_200_OK)
+    except Exception as e:
+        print(e)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+def get_notification(request):
+    try:
+        if not request.user.is_authenticated:
+            return  Response(status=status.HTTP_401_UNAUTHORIZED)
+        entries = Notification.objects.filter(user=request.user,is_deleted=False)
+        serializer = NotificationSerializer(entries,many=True)
+        return Response(serializer.data,status=status.HTTP_200_OK)
+    except Exception as e:
+        print(e)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+@api_view(['GET'])
+def get_friend_requests(request):
+    try:
+        if not request.user.is_authenticated:
+            return  Response(status=status.HTTP_401_UNAUTHORIZED)
+        friend_req_list = FriendRequestEntry.objects.filter(target=request.user)
+        serializer = FriendRequestTargetSerializer(friend_req_list,many=True)
+        return Response(serializer.data,status=status.HTTP_200_OK)
     except Exception as e:
         print(e)
         return Response(status=status.HTTP_400_BAD_REQUEST)

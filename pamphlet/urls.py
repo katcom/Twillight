@@ -33,6 +33,8 @@ urlpatterns = [
     path('api/upload-avatar/',login_required(login_url='/login/')(api.upload_avatar),name="get-friends-status"),
     path('api/like-a-post/',login_required(login_url='/login/')(api.like_a_post),name="like_a_post"),
     path('api/dislike-a-post/',login_required(login_url='/login/')(api.dislike_a_post),name="dislike_a_post"),
+    path('api/get-notifications/',api.get_notification,name="get notification"),
+    path('api/get-friend-requests/',api.get_friend_requests,name="get friend requests"),
 
     # path('<str:room_name>/',login_required(login_url='/login/')(views.room),name='room'),
 

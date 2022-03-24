@@ -69,6 +69,17 @@ class StatusGetResultSerializer(serializers.ModelSerializer):
         model = StatusEntry
         fields = ['user_id','text_content','visibility','creation_date','creation_date','last_edited']
 
+class FriendRequestTargetSerializer(serializers.ModelSerializer):
+    user_custom_name = serializers.CharField(source='user.face_pamphlet_account.user_custom_name')
+    user_id = serializers.CharField(source='user.username')
+    is_undetermined = serializers.SerializerMethodField('get_is_determined')
+    def get_is_determined(self,instance):
+        if instance.is_accepted is None:
+            return True
+        return False
+    class Meta:
+        model = FriendRequestEntry
+        fields=['pk','user','user_custom_name',"user_id",'is_accepted','is_undetermined']
 class FriendRequestSourceSerializer(serializers.ModelSerializer):
     # user_id = serializers.CharField(source='user.username',read_only=True)
     # target_id = serializers.CharField(source='user.username',read_only=True)
@@ -123,4 +134,8 @@ class UserStatusSerializer(serializers.ModelSerializer):
         model=StatusEntry
         fields=['pk','user_id','user_custom_name','text_content','visibility','creation_date','last_edited','images','is_liked']
 
-
+class NotificationSerializer(serializers.ModelSerializer):
+    content = serializers.CharField(source='body.text_content')
+    class Meta:
+        model = Notification
+        fields=['type','creation_date','content']

@@ -48,7 +48,8 @@ def private_chat_room(request,friend_id):
         room = manager.get_or_create(request.user.username,friend_id)
 
         return render(request,'pamphlet/room.html',{
-                    'room_name':str(room.room_id)
+                    'room_name':str(room.room_id),
+                    'friend_name':str(FacePamphletUser.objects.get(user__username=friend_id).user_custom_name)
         })
     except Exception as e:
         print('err:',e)

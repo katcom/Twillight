@@ -27,3 +27,11 @@ class StatusImageFactory(factory.django.DjangoModelFactory):
 class FriendRequestFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = FriendRequestEntry
+
+class NotificationContentFactory(factory.django.DjangoModelFactory):
+    text_content="Welcome! New user"
+    class Meta:
+        model = NotificationContent
+class NotificationFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Notification

@@ -109,23 +109,44 @@
             font-size: 30px;
             transform: translateY(140%);
         }
-
+        #room-header{
+            background-color: whitesmoke;
+            width: 100%;
+        }
+        #send-label{
+            cursor: pointer;
+            font-size: 2rem;
+            color: cornflowerblue;
+            font-weight: bold;
+        }
     </style>
+    <div id='room-header'class="d-flex container align-items-center">
+        <div class="ml-2 mr-2 btn">
+            <i class="fa-solid fa-arrow-left "></i>
+        </div>
+        <div class="">
+            {{ friend_name}}
+        </div>
+    </div>
     <!-- <textarea id="chat-log" cols="100" rows="20"></textarea><br> -->
     <div id="chat-log-container" class="container">
 
     </div>
-    <div class="container " id="input-container">
-        <div class="row justify-content-center">
+    <div class="container p-2 " id="input-container">
+        <div class=" justify-content-center d-flex">
             <div id="text-input-container" class="col-10 rounded">
-                <button id="add-button"><i class="fa-solid fa-circle-plus"></i></button>
+                <button id="add-button"><label for="image-send"><i class="fa-solid fa-circle-plus"></i></label></button>
+                <input id='image-send'hidden type="file" accept="image/*" >
                 <p class="lead emoji-picker-container">
 
                 <textarea class="form-control textarea-control" id="chat-message-input" type="text"  data-emojiable="true"></textarea><br>
                 </p>
             </div>
+            <div class='col-1 d-flex align-items-center p-2'>
+                <label for="chat-message-submit" id="send-label"> <i class="fa-solid fa-angle-right"></i></label>
+                <input class="btn"  id="chat-message-submit" type="button" value="">
 
-            <input  class='col-1' id="chat-message-submit" type="button" value="Send">
+            </div>
         </div>
 
     </div>
@@ -160,18 +181,8 @@
             }
         };
 
-        document.querySelector('#chat-message-submit').onclick = function(e) {
-            const messageInputDom = document.querySelector('#chat-message-input');
-            const message = messageInputDom.value;
-            chatSocket.send(JSON.stringify({
-                'message': message
-            }));
-            messageInputDom.value = '';
-            $('#text-input-container .emoji-wysiwyg-editor').empty()
-            $("#chat-log-container").animate({ scrollTop: $('#chat-log-container').prop("scrollHeight") }, 1000);
 
-        };
-        
+
         function add_message_box(data){
             if (data.message_direction == 'incoming'){
                 var tpl = $("#single-incoming-message-box").html()
@@ -183,6 +194,20 @@
             var html = template(data)
             $('#chat-log-container').append(html)
         }
+
+        $('#image-send').on('change',function(e){
+            input = e.currentTarget
+            file =input.files[0]
+            var reader = new FileReader();
+            reader.onload = (function(theFile) {
+                    return function(e) {
+                        console.log(e.target.result )
+                    ;
+                };
+                })(file);
+            reader.readAsText(file, "UTF-8");
+            
+        })
     </script>
 
     {% verbatim %}
@@ -208,6 +233,8 @@
         </div>
     </script>
     {% endverbatim %}
+    <script src="{% static 'js/room.js' %}"></script>
+
     <script src="{% static 'emoji-picker-main/lib/js/config.js' %}"></script>
   <script src="{% static 'emoji-picker-main/lib/js/util.js' %}"></script>
   <script src="{% static 'emoji-picker-main/lib/js/jquery.emojiarea.js' %}"></script>
@@ -225,6 +252,11 @@
       // It can be called as many times as necessary; previously converted input fields will not be converted again
       window.emojiPicker.discover();
     });
+  </script>
+  <script>
+      $('#room-header').on('click',function(e){
+          window.history.back()
+      })
   </script>
 </body>
 </html>

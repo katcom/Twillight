@@ -90,12 +90,20 @@ class UnilateralFriendship(models.Model):
         return "user:{}, friend:{}, creation_id:{}, creation_date:{}".format(self.user,self.friend,self.creation_record.pk,self.creation_record.creation_date)
 
 
-# class NotificationType(models.TextChoices):
-#     FRIEND_REQUEST = 'FRI',_('Friend Request')
-#     OTHER_MESSAGE = 'OTE',_('Friend Request')
+class NotificationType(models.TextChoices):
+    FRIEND_REQUEST = 'FRI',_('Friend Request')
+    SYSTEM_NOTIFICATION = 'SYS',_('System Notification')
 
-# class Notification(models.Model):
-#     type = models.CharField(max_length=3,blank=False,null=False,choices=NotificationType.choices,default=NotificationType.OTHER_MESSAGE)
+    OTHER_MESSAGE = 'OTE',_('Friend Request')
+
+class Notification(models.Model):
+    type = models.CharField(max_length=3,blank=False,null=False,choices=NotificationType.choices,default=NotificationType.OTHER_MESSAGE)
+    user = models.ForeignKey(User,on_delete=models.DO_NOTHING,related_name='notifications',null=False)
+    is_deleted = models.BooleanField(default=False,null=False,blank=False)
+    creation_date = models.DateField(auto_now_add=TRUE,null=False,editable=False)
+class NotificationContent(models.Model):
+    notification  = models.OneToOneField(Notification,on_delete=models.CASCADE,null=False,related_name="body")
+    text_content =models.CharField(max_length=128,null=True,blank=False)
 
 class PrivateChatRoom(models.Model):
     user_1 = models.ForeignKey(User,

@@ -18,34 +18,41 @@
             align-items: center;
         }
         .friends-container{
-            width: 80%;
+            height: 100%;
+            background-color: white;
+        }
+        .friend-box{
+            background-color: white;
+            padding: 20px;
+            border-bottom: 1px solid lightgray;
+        }
+        .chat-button{
+            position: absolute;
+            transform: translate(0,-150%);
+        }
+        .chat-button-wrapper {
+            display: flex;
         }
     </style>
-    
-        <div id="friends-list-container"class="friends-container container justify-content-center">
+        <div style="width: 100%;">
+            <div id="friends-list-container"class="friends-container container col-12 col-sm-12 col-md-8 col-lg-5">
+            </div>
         </div>
 
+
     {% verbatim %}
-        <script type="text/template" id="single-friend-box">
+        <script type="text/template" id="single-friend-box" >
             {{#each result}}
-    
-                <div class="row">
-                        <div class="friend-box col-9 col-sm-10 col-md-11" >
-                            <div class="row">
-                                    <div class=" container">
-                                        <div class="row" >
-                                            {{user_custom_name}}
-                                        </div>
-                                        <button class='btn btn-primary' onclick="chat_with_friend('{{user_id}}')">Chat</button>
-                                    </div>
-                                    
+                        <div class="friend-box ">
+                            <div class="" >
+                                {{user_custom_name}}
+                                <p class="date-info">{{user_id}}</p>
                             </div>
-                            <div class="row">
-                                    <p class="date-info">{{user_id}}</p>
+                            <div class="chat-button-wrapper justify-content-end" >
+                                <button class='btn btn-primary chat-button' onclick="chat_with_friend('{{user_id}}')">Chat</button>
+
                             </div>
                         </div>
-    
-                </div>
             {{/each}}
         </script>
     {% endverbatim %}
