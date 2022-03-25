@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
 import uuid
 
-from pamphlet.utils import getStatusFilePathByUsername,getAvatarFilePathByUsername
+from pamphlet.utils import getStatusFilePathByUsername,getAvatarFilePathByUsername,getProfileBackgroundFilePathByUsername
 # Create your models here.
 class FacePamphletUser(models.Model):
     user = models.OneToOneField(User,on_delete=models.CASCADE,related_name="face_pamphlet_account")
@@ -21,7 +21,7 @@ class FacePamphletUser(models.Model):
         return super(self.__class__,self).delete(*args,**kwargs)
 
 class UserDescription(models.Model):
-    user = models.OneToOneField(FacePamphletUser,null=False,on_delete=models.CASCADE)
+    user = models.OneToOneField(User,null=False,on_delete=models.CASCADE,related_name='description')
     description = models.CharField(max_length=256,default="",blank=True)
     def __str__(self):
         return self.description
@@ -138,3 +138,7 @@ class LikesEntry(models.Model):
         ]
     def __str__(self):
         return "user:{},status:{}".format(self.user,self.status)
+
+class ProfileEntry(models.Model):
+    user = models.OneToOneField(User,on_delete=models.DO_NOTHING,related_name='profile')
+    background_image = models.ImageField(null=True,blank=True,upload_to=getProfileBackgroundFilePathByUsername)

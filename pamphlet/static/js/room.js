@@ -5,7 +5,8 @@ document.querySelector('#chat-message-submit').onclick = function(e) {
         return
     }
     chatSocket.send(JSON.stringify({
-        'message': message
+        'message': message,
+        'type':'chat_message'
     }));
     messageInputDom.value = '';
     $('#text-input-container .emoji-wysiwyg-editor').empty()

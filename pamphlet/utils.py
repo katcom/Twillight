@@ -18,3 +18,5 @@ def getUserAppDataDirectory(username):
 def getAvatarFilePathByUsername(instance,filename):
     return "{}/avatar_image/{}".format(instance.user.username,filename)
 
+def getProfileBackgroundFilePathByUsername(instance,filename):
+    return "{}/profile_image/{}".format(instance.user.username,filename)

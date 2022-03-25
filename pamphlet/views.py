@@ -33,7 +33,9 @@ def user_home(request):
     return render(request,'pamphlet/user_home.html',{"status_list":status,'f_user':FacePamphletUser.objects.get(user=request.user)})
 
 def user_profile(request,user_id):
-    return render(request,'pamphlet/user_profile.html',{"user_id":user_id})
+    profile = FacePamphletUser.objects.get(user__username=user_id)
+    serializer = UserProfileSerializer(profile)
+    return render(request,'pamphlet/user_profile.html',{"profile":serializer.data})
 
 def friend_request(request):
     friend_req_list = FriendRequestEntry.objects.filter(target=request.user)

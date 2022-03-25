@@ -19,7 +19,7 @@ main {
     width: 100%!important;
     align-self: center;
     /* background-color: rgb(224, 246, 253); */
-    background-color: black;
+    background-color: white;
     height: 100%;
     overflow: scroll;
 }
@@ -79,4 +79,9 @@ main {
 }
 .font-color-red{
     color: red;
+}
+.post-setting-menu{
+    position: absolute;
+    right:10%;
+    top:0px;
 }

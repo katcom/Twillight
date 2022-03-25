@@ -41,7 +41,7 @@ function setupLikeButtons(){
             var actionUrl = form.attr('action')
             console.log("called")
             var btn = $(this).siblings('.like-button')
-
+            console.log(form.serialize())
             $.ajax(
                 {
                     type:"POST",
@@ -107,4 +107,50 @@ function set_to_like_btn(btn){
     if(!isNaN(count)){
         $(btn).find('.likes-count').text(count+1)
     }
+}
+
+function set_delete_status_btn(){
+    $('.delete-status-btn').each(function(){
+        console.log('find delete btn')
+        console.log(this)
+        $(this).on('click',function(e){
+            var btn = e.currentTarget;
+            console.log('click delete btn')
+            
+            $(btn).siblings('.delete-status-form').find("input[type='submit']").trigger('click')
+        })
+    })
+    set_delete_status_form()
+}
+function set_delete_status_form(){
+    
+    $('.delete-status-form').each(function(){
+        $(this).on('submit',function(e){
+            e.preventDefault()
+            var form = $(this)
+            var actionUrl = form.attr('action')
+            is_confirmed = confirm('Do you want to delete this status?')
+            if(is_confirmed){
+    
+                $.ajax({
+                    type:"POST",
+                    url:actionUrl,
+                    data:form.serialize(),
+                    success:function(data){
+                        alert('Status Deleted!')
+                        window.location.reload()                    
+                    },
+                    error:function(result){
+                        alert('something wrong,see console')
+                        console.log(result.responseText) 
+                    }                   
+                })
+            }
+        })
+    })
+}
+function remove_delete_status_button(){
+    $('.delete-status-btn').each(function(){
+        $(this).remove()
+    })
 }

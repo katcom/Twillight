@@ -126,6 +126,7 @@ $.ajax(
                 adjust_status_image_layout()
                 loadStatusAvatar($('#status-container'))
                 setupLikeButtons()
+                set_delete_status_btn()
             },
             error:function(result){
                 console.log("Something wrong")
@@ -162,5 +163,5 @@ function adjust_status_image_layout(){
 
 </script>
 <script src="{% static 'js/status.js'%}"></script>
-
+<script></script>
 {% endblock%}

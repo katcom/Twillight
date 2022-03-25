@@ -32,6 +32,7 @@ class FriendshipManager(models.Manager):
             if UnilateralFriendship.objects.filter(user=friendship.friend,friend=user).exists():
                 friends.append(friendship.friend)
         return friends
+        
 class PrivateChatRoomManager(models.Manager):
     def create(self,user_1,user_2):
         user1 = User.objects.filter(username=user_1)

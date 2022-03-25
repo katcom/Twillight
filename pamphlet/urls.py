@@ -22,7 +22,7 @@ urlpatterns = [
     path('api/get-all-users/',api.get_all_users,name='api-all-users'),
     path('api/search-users/',api.search_users,name='api-all-users'),
     path('api/create-status/',api.create_status,name='create_status'),
-    path('api/get-status/<str:user_id>',api.get_status,name="get_status"),
+    path('api/get-status/<str:user_id>',api.get_profile_status,name="get_status"),
     path('api/make-friend-request/',api.make_friend_request,name="get_status"),
     path('api/respond-friend-request/',api.respond_friend_request,name="respond_friend_request"),
     path('api/get-friends-list/',api.get_friends_list,name="get_friend_list"),
@@ -35,6 +35,8 @@ urlpatterns = [
     path('api/dislike-a-post/',login_required(login_url='/login/')(api.dislike_a_post),name="dislike_a_post"),
     path('api/get-notifications/',api.get_notification,name="get notification"),
     path('api/get-friend-requests/',api.get_friend_requests,name="get friend requests"),
+    path('api/get-profile/<str:user_id>',api.get_profile,name="get friend requests"),
+    path('api/delete-status/',api.delete_status,name="get friend requests"),
 
     # path('<str:room_name>/',login_required(login_url='/login/')(views.room),name='room'),
 

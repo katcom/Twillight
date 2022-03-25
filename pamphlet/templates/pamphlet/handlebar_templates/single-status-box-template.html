@@ -13,6 +13,24 @@
                                 <p class="date-info">Last edited: {{last_edited}}</p>
 
                             </div>
+                            <div class="btn-group dropdown post-setting-menu">
+                                <button type="button" style="color:grey"class="btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fa-solid fa-ellipsis"></i>
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                                    <button class="dropdown-item delete-status-btn" type="button"><i class="fa-solid fa-trash"></i>Delete</button>
+
+                                    <button class="dropdown-item" type="button"><i class="fa-solid fa-eye"></i>Change Visibility</button>
+                                    <form class='delete-status-form' hidden action='/api/delete-status/'method='POST'>
+                                        {% endverbatim %}
+                                        {% csrf_token %}
+                                        {% verbatim %}
+                                        <input name='pk' value="{{pk}}">
+                                        <input id='delete-status-submit'type='submit'>
+
+                                    </form>
+                                  </div>
+                            </div>
                         </div>
                             <div class="col-12 row container justify-content-center">
                                 <div class="col-8 col-sm-8 col-md-8 col-lg-8 col-xl-10" >

@@ -1,0 +1,128 @@
+{% extends "pamphlet/base.html" %}
+{%load bootstrap4 %}
+{% load static %}
+
+{% block content %}
+    <script src="{% static 'js/handlebars-v4.7.7.js'%}"></script>
+    <link rel="stylesheet" href="{% static 'css/status.css'%}"></script>
+
+    <style>
+
+        main{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+    </style>
+    <div class="container" style="width: 100%;">
+        <div  style="width: 100%;border-bottom: 1px solid lightgrey;">
+            <div style="display:flex; flex-direction:column;height: 600px;">
+                <div id='background-box' style="height: 50%;background-color: grey;">
+    
+                </div>
+                <div style="background-color: white;height: 50%;  padding: 20px;">
+                    <div style="display: flex; flex-direction: row; justify-content: end;">
+                        <div style="justify-self: start;margin-right: auto;">
+                            <img id='avatar-img' class="avatar-icon"alt=""  style="transform: scale(2.5) translateX(60%)" src="">
+                        </div>
+                        <div style="align-self: flex-end;justify-self: end;">
+                            <button class="rounded-pill btn btn-outline-success"> Edit Profile </button>
+                        </div>
+                    </div>
+                    <div style="margin-top: 50px;margin-left: 30px;">
+                        <div style="line-height: 1px;margin-bottom: 25px;">
+                            <p>
+                                <h2 id="user-custom-name-text"></h2>
+                            </p>
+                            <p style="color:darkgray" id="user-id-text">
+                                
+                            </p>
+                        </div>
+                        <div id="description-box">
+                            Description
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="status-list-container" class="status-container container justify-content-center">
+                
+        </div>
+    </div>
+    
+
+    {% verbatim %}
+    <script type="text/template" id="single-status-box">
+        {{#each result}}
+
+            <div class="row">
+                    <div class="status-box col-9 col-sm-10 col-md-11">
+                        <div class="row">
+                                <div class=" container">
+                                    <div class="row" >
+                                        {{text_content}}
+                                    </div>
+                                </div>
+                            
+                        </div>
+                        <div class="row">
+                                <p class="date-info">{{creation_date}}</p>
+                        </div>
+                    </div>
+
+            </div>
+        {{/each}}
+    </script>
+{% endverbatim %}
+
+{% include './handlebar_templates/single-status-box-template.html' %}
+{{ profile|json_script:"user" }}
+
+<script>
+    const user = JSON.parse(document.getElementById('user').textContent);
+
+    loadProfile(user)
+    loadStatus(user);
+        function loadStatus(user){
+            $.ajax(
+            {
+                type:"GET",
+                url:`/api/get-status/${user.user_id}`,
+                success:function(data){
+                    //console.log(data)
+                    display_serach_result(data)
+                    loadStatusAvatar($('#status-list-container'))
+                    //setupLikeButtons()
+
+                },
+                error:function(result){
+                    console.log(result.responseText)
+                }
+
+            })
+        }
+    function  loadProfile(user){
+        $('#background-box').attr('background',`url('${user.background_image}')`)
+        $('#avatar-img').attr('src',user.avatar)
+        $('#description-box').text(user.description)
+        $('#user-custom-name-text').text(user.user_custom_name)
+        $('#user-id-text').text('@'+user.user_id)
+
+    }
+function loadStatus(user_info){
+    
+}
+    
+function display_serach_result(data){
+    data_dict ={result:data}
+    //console.log(data_dict)
+    var tpl = $("#single-status-box-template").html()
+    var template = Handlebars.compile(tpl)
+    var html = template(data_dict)
+    $("#status-list-container").html(html)
+    //console.log(html)
+}
+
+</script>
+{% endblock%}

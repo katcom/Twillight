@@ -63,11 +63,11 @@ class StatusEntrySerializer(serializers.ModelSerializer):
         model = StatusEntry
         fields = ['user','text_content','visibility']
 
-class StatusGetResultSerializer(serializers.ModelSerializer):
+class ProfileStatusSerializer(serializers.ModelSerializer):
     user_id = serializers.CharField(source='user.username')
     class Meta:
         model = StatusEntry
-        fields = ['user_id','text_content','visibility','creation_date','creation_date','last_edited']
+        fields = ['pk','user_id','text_content','visibility','creation_date','creation_date','last_edited']
 
 class FriendRequestTargetSerializer(serializers.ModelSerializer):
     user_custom_name = serializers.CharField(source='user.face_pamphlet_account.user_custom_name')
@@ -139,3 +139,19 @@ class NotificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Notification
         fields=['type','creation_date','content']
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    user_id = serializers.CharField(source='user.username')
+    profile = serializers.CharField(source='user.profile.background_image.url')
+    description = serializers.CharField(source='user.description.description')
+    avatar = serializers.CharField(source='user.avatar.avatar_image.url')
+    class Meta:
+        model = FacePamphletUser
+        fields = ['user_id','user_custom_name','profile','description','avatar']
+
+
+class StatusDeleteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = StatusEntry
+        fields=['pk',]
+        

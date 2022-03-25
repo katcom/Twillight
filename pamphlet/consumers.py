@@ -29,7 +29,7 @@ class ChatConsumer(WebsocketConsumer):
         async_to_sync(self.channel_layer.group_send)(
             self.room_group_name,
             {
-                'type':'chat_message',
+                'type':text_data_json['type'],
                 'sender':self.scope['user'].username,
                 'message':message
             }
@@ -50,5 +50,21 @@ class ChatConsumer(WebsocketConsumer):
         #send message to Websocket
         self.send(text_data=json.dumps({
             'message': message,
-            'message_direction':message_direction
+            'message_direction':message_direction,
+            'type':event['type'],
+        }))
+    # Receive message from room group
+    def image_message(self,event):
+        message = event['message']
+        sender = event['sender']
+        if sender == self.scope['user'].username:
+            message_direction= 'outgoing'
+        else:
+            message_direction= 'incoming'
+
+        #send message to Websocket
+        self.send(text_data=json.dumps({
+            'message': message,
+            'message_direction':message_direction,
+            'type':event['type'],
         }))

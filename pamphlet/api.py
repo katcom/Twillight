@@ -6,7 +6,7 @@ import re
 import pdb; 
 from django.forms import ValidationError
 from .utils import *
-from .forms import AvatarForm, LikeEntryForm, StatusEntryImageForm, UserSettingForm
+from .forms import *
 from .models import *
 from rest_framework import status
 from rest_framework.response import Response
@@ -88,10 +88,10 @@ def create_status(request):
             return Response("Unauthorized! No user logged in!",status=status.HTTP_401_UNAUTHORIZED)
         queryset = request.POST.copy()
         queryset['user'] = request.user.pk
-        print(queryset)
-        print('files:')
-        print(request.FILES)
-        print(type(request.FILES))
+        # print(queryset)
+        # print('files:')
+        # print(request.FILES)
+        # print(type(request.FILES))
 
         
         
@@ -100,17 +100,14 @@ def create_status(request):
             status_entry = serializer.save()
             req = request.POST.copy()
             req['status_entry'] =status_entry
-            print("status created")
-            print(len(request.FILES))
+            # print("status created")
+            # print(len(request.FILES))
             for key,file in request.FILES.items():
-                print('loop:',key)
                 req['status_entry']=status_entry
                 file_dict = {"image_file":file}
                 form = StatusEntryImageForm(req, file_dict)
-                print('checkout file')
                 if form.is_valid():
                     form.save()
-                    print("file created")
                 else:
                     print("form err:",form.errors)
                     return Response(form.errors,status=status.HTTP_400_BAD_REQUEST)
@@ -127,13 +124,14 @@ def create_status(request):
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
-def get_status(request,user_id):
+def get_profile_status(request,user_id):
     try:
-        status_list = User.objects.get(username=user_id).status
-        serializer = StatusGetResultSerializer(status_list,many=True)
+        status_list = User.objects.get(username=user_id).status.filter(visibility=Visibility.PUBLIC_VIEW)
+        serializer = UserStatusSerializer(status_list,many=True,context={'request':request})
         return Response(serializer.data,status=status.HTTP_200_OK)
 
-    except:
+    except Exception as e:
+        print(e)
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
@@ -275,15 +273,21 @@ def upload_avatar(request):
 @api_view(['POST'])
 def like_a_post(request):
     try:
+        print(request.POST)
         form = LikeEntryForm(request.POST)
-        raw_like_entry = form.save(commit=False)
-        if LikesEntry.objects.filter(user=request.user.pk,status=raw_like_entry.status).exists():
-            return Response('User {} already liked this post'.format(raw_like_entry.user),status=status.HTTP_400_BAD_REQUEST)
-        else:
-            raw_like_entry.user = request.user;
-            raw_like_entry.save()
-            form.save()
-            return Response(status=status.HTTP_200_OK)
+        if form.is_valid():
+            raw_like_entry = form.save(commit=False)
+
+            if LikesEntry.objects.filter(user=request.user.pk,status=raw_like_entry.status).exists():
+                print('already liked')
+                return Response('User {} already liked this post'.format(raw_like_entry.user),status=status.HTTP_400_BAD_REQUEST)
+            else:
+                raw_like_entry.user = request.user;
+                print('raw_like_entry:',raw_like_entry)
+
+                raw_like_entry.save()
+                form.save()
+                return Response(status=status.HTTP_200_OK)
     except Exception as e:
         print(e)
         return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -326,3 +330,35 @@ def get_friend_requests(request):
     except Exception as e:
         print(e)
         return Response(status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+def get_profile(request,user_id):
+    try:
+        profile = FacePamphletUser.objects.get(user__username=user_id)
+        serializer = UserProfileSerializer(profile)
+        return Response(serializer.data,status=status.HTTP_200_OK)
+    except Exception as e:
+        print(e)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+
+@api_view(['POST'])
+def delete_status(request):
+    try:
+        if not request.user.is_authenticated:
+            return  Response(status=status.HTTP_401_UNAUTHORIZED)
+
+        status_entry = StatusEntry.objects.get(pk=request.POST['pk'])
+            # status_entry = status_serializer.save()
+            # print(status_entry)
+            # if the post does not belong to the current user,return 401 error
+        if status_entry.user != request.user:
+            return  Response(status=status.HTTP_401_UNAUTHORIZED)
+
+        status_entry.delete()
+        return Response('Status Deleted',status=status.HTTP_200_OK)
+
+    except Exception as e:
+        print(e)
+        return Response(str(e),status=status.HTTP_400_BAD_REQUEST)
