@@ -25,7 +25,7 @@
                     <input type="file" hidden>
                     {% csrf_token %}
                     <div class="row justify-content-center">
-                        <textarea class="row" row="5"  name="text_content" placeholder="Share your ideas with your friends!" id="status-text-input"></textarea>
+                        <textarea id="status-text-input" class="row" row="5"  name="text_content" placeholder="Share your ideas with your friends!" id="status-text-input"></textarea>
                     </div>
                     <div class="image-preview-container" id="create-status-image-preview-container">
                         <div id="image-preview-left-column" class="preview-image-column-container">
@@ -91,6 +91,9 @@
     $("#create-status-form").on('submit',function(e){
     e.preventDefault()
     var form = $(this)
+    if($('#status-text-input').val() ==""){
+        return
+    }
     var actionUrl = form.attr('action')
     console.log("called")
     var formData = new FormData(this);
@@ -101,6 +104,8 @@
             data:formData,
             success:function(data){
                 alert("Status Created Successfully!")
+                $('#status-text-input').val("")
+                window.location.reload()
                 console.log(data)
             },
             error:function(result){
@@ -126,7 +131,7 @@ $.ajax(
                 adjust_status_image_layout()
                 loadStatusAvatar($('#status-container'))
                 setupLikeButtons()
-                set_delete_status_btn()
+                set_control_buttons(data)
             },
             error:function(result){
                 console.log("Something wrong")
@@ -160,6 +165,7 @@ function adjust_status_image_layout(){
         }
     })
 }
+
 
 </script>
 <script src="{% static 'js/status.js'%}"></script>

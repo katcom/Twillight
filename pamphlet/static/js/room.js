@@ -1,4 +1,6 @@
 document.querySelector('#chat-message-submit').onclick = function(e) {
+    e.preventDefault()
+    console.log('submi')
     const messageInputDom = document.querySelector('#chat-message-input');
     const message = messageInputDom.value;
     if (message == ""){
@@ -8,6 +10,7 @@ document.querySelector('#chat-message-submit').onclick = function(e) {
         'message': message,
         'type':'chat_message'
     }));
+    console.log('send')
     messageInputDom.value = '';
     $('#text-input-container .emoji-wysiwyg-editor').empty()
     $("#chat-log-container").animate({ scrollTop: $('#chat-log-container').prop("scrollHeight") }, 1000);

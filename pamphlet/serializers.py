@@ -142,9 +142,14 @@ class NotificationSerializer(serializers.ModelSerializer):
 
 class UserProfileSerializer(serializers.ModelSerializer):
     user_id = serializers.CharField(source='user.username')
-    profile = serializers.CharField(source='user.profile.background_image.url')
+    profile = serializers.SerializerMethodField('get_profile')
     description = serializers.CharField(source='user.description.description')
     avatar = serializers.CharField(source='user.avatar.avatar_image.url')
+    def get_profile(self,instance):
+        img = instance.user.profile.background_image
+        if img:
+            return img.url
+        return None
     class Meta:
         model = FacePamphletUser
         fields = ['user_id','user_custom_name','profile','description','avatar']
@@ -154,4 +159,8 @@ class StatusDeleteSerializer(serializers.ModelSerializer):
     class Meta:
         model = StatusEntry
         fields=['pk',]
-        
+
+class ChangeStatusVisibilitySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = StatusEntry
+        fields=['pk','visibility']

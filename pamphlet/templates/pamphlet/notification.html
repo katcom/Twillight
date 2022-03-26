@@ -23,16 +23,20 @@
         .accepted_box{
             border: 1px solid black;
             padding :0.375rem 0.75rem;
-            color:#198754
+            color:#198754;
+            height: 2.5rem;
         }
         .rejected_box{
             border: 1px solid black;
             padding :0.375rem 0.75rem;
-            color:rgb(220, 53, 69)
+            color:rgb(220, 53, 69);
+            height: 2.5rem;
+
         }
         .accept-btn{
             margin-right: 30px;
         }
+
         h5{
             display: inline;
         }
@@ -63,6 +67,7 @@
                     {% csrf_token %}
                     {% verbatim %}
                 <div class="col-6">
+                    <img class='avatar-icon' value='{{user_id}}' alt='profile'>
                     <label><h5 >{{user_custom_name}}</h5> wants to be friends with you.</label>
                     <input hidden name="record_id" value="{{pk}}">
                 </div>
@@ -100,6 +105,15 @@
                     console.log(data)
                     display_data_on_container_by_template(data,'friend-request-container','single-friend-request-box')
                     setup_accept_buttons()
+                    loadStatusAvatar($('#friend-request-container'))
+                    $(".avatar-icon").each(function(){
+                        $(this).css('cursor','pointer')
+                        var uid=$(this).attr('value')
+                        var btn = this
+                        $(this).unbind().on('click',function(){
+                            window.location.href='/user/'+uid;
+                        })
+                    })
                 },
                 error:function(result){
                     console.log(result.responseText)

@@ -118,6 +118,8 @@ class PrivateChatRoom(models.Model):
             models.UniqueConstraint(fields=['user_1','user_2'],name="unique user pair"),
             models.UniqueConstraint(fields=['user_2','user_1'],name="unique user pair 2"),
         ]
+    def __str__(self):
+        return'user_1: {},user_2: {}'.format(self.user_1,self.user_2)
 class StatusEntryImage(models.Model):
     status_entry = models.ForeignKey(StatusEntry,null=False,blank=False,on_delete=models.CASCADE,related_name="images")
     image_file = models.ImageField(blank=True,null=TRUE,upload_to=getStatusFilePathByUsername)
@@ -125,8 +127,8 @@ class StatusEntryImage(models.Model):
     description = models.CharField(max_length=128,null=True,blank=True,default="")
 
 class AvatarEntry(models.Model):
-    user = models.OneToOneField(User,on_delete=models.DO_NOTHING,related_name='avatar')
-    avatar_image = models.ImageField(null=True,blank=True,upload_to=getAvatarFilePathByUsername,default="images/defaults/default-avatar-alien.png")
+    user = models.OneToOneField(User,on_delete=models.CASCADE,related_name='avatar')
+    avatar_image = models.ImageField(null=True,blank=True,upload_to=getAvatarFilePathByUsername,default="__defaults__/default-avatar-alien.png")
 
 class LikesEntry(models.Model):
     user = models.ForeignKey(User,related_name='likes',on_delete=models.CASCADE)
@@ -140,5 +142,7 @@ class LikesEntry(models.Model):
         return "user:{},status:{}".format(self.user,self.status)
 
 class ProfileEntry(models.Model):
-    user = models.OneToOneField(User,on_delete=models.DO_NOTHING,related_name='profile')
+    user = models.OneToOneField(User,on_delete=models.CASCADE,related_name='profile')
     background_image = models.ImageField(null=True,blank=True,upload_to=getProfileBackgroundFilePathByUsername)
+    def __str__(self):
+        return "user:{}".format(self.user)

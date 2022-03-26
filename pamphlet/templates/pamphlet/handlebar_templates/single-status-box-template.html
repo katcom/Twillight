@@ -20,7 +20,7 @@
                                 <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
                                     <button class="dropdown-item delete-status-btn" type="button"><i class="fa-solid fa-trash"></i>Delete</button>
 
-                                    <button class="dropdown-item" type="button"><i class="fa-solid fa-eye"></i>Change Visibility</button>
+                                    <button class="dropdown-item change-visibility-btn" type="button" value="{{pk}}"><i class="fa-solid fa-eye"></i>Change Visibility</button>
                                     <form class='delete-status-form' hidden action='/api/delete-status/'method='POST'>
                                         {% endverbatim %}
                                         {% csrf_token %}
@@ -29,7 +29,40 @@
                                         <input id='delete-status-submit'type='submit'>
 
                                     </form>
+                                    
                                   </div>
+                                  <div id='change-visibility-container-{{pk}}' class='change-visibility-container'>
+                                    <div class='d-flex w-100 justify-content-start'>
+                                        <button class="btn close-visiblity-btn " id="close-visiblity-btn">
+                                             <i class="fa-solid fa-xmark"></i>
+                                        </button>
+                                     </div>
+                                      <form id="change-visibility-form-{{pk}}" class='change-visibility-form rounded' action='/api/update-status-visibility/'method='POST' >
+                                       
+                                        <p class="d-flex flex-column w-100 align-items-center" >
+                                            <label for="change-visibility-select" style="font-size:20px">Visibility:</label>
+                                            <select class="change-visibility-select form-select" aria-label="Default select example" name="visibility" style="margin-left: 10px; width:70%" class="form-select" pk='{{pk}}'>
+                                                <option value="PRI"> Only Me </option>
+                                                <option value="FRI"> Only Friends </option>
+                                                <option value="PUB"> All People </option>
+                                                
+                                            </select>
+                                            <input class='pk-record'disabled hidden value="{{pk}}">
+    
+                                        </p>
+                                        <p style='display:none'>
+                                            <input  name='pk' value="{{pk}}">
+                                        </p>
+                                        <p>
+                                            <input class='btn btn-primary' id='change-status-visibility-btn'type='submit' value='OK'>
+                                        </p>
+                                        {% endverbatim %}
+                                        {% csrf_token %}
+                                        {% verbatim %}
+    
+                                    </form>
+                                  </div>    
+                                 
                             </div>
                         </div>
                             <div class="col-12 row container justify-content-center">

@@ -55,6 +55,8 @@
     flex-direction: column;
     justify-items: center;
     align-items: center;
+    padding-bottom: 50vh;
+
 }
 
 .visibility-select-container {
@@ -82,4 +84,26 @@
 }
 .likes-count{
     display: inline;
+}
+.change-visibility-container{
+    background:white;
+    position:absolute;
+    transform:translate(-50%,50%);
+    z-index: 100;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    border: 1px solid lightgrey;
+    width: 300px;
+    padding: 10px;
+}
+.change-visibility-form{
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.heart-logo{
+    padding-right: 5px;
 }

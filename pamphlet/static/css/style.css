@@ -3,6 +3,15 @@
 html{
     height: 100%;
 }
+#title-text{
+    font-size: 1.6em;
+    font-family: sans-serif;
+    text-align: center;
+    padding: 3px;
+    padding-top: 3px;
+    padding-top: 5px;
+
+}
 body{
     display: flex;
     flex-direction: column;
@@ -43,7 +52,6 @@ main {
 .avatar-icon{
     width: 48px;
     height: 48px;
-
     border-radius: 50%;
     background-color: white;
     border: 1px solid lightblue;
@@ -84,4 +92,8 @@ main {
     position: absolute;
     right:10%;
     top:0px;
+}
+#page-content-wrapper{
+    display: flex;
+    flex-direction: column;
 }

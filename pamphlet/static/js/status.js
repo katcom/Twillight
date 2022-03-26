@@ -149,8 +149,72 @@ function set_delete_status_form(){
         })
     })
 }
+
+function set_visibility_update_form(){
+    
+    $('.change-visibility-form').each(function(){
+        $(this).on('submit',function(e){
+            e.preventDefault()
+            var form = $(this)
+            var actionUrl = form.attr('action')
+                $.ajax({
+                    type:"POST",
+                    url:actionUrl,
+                    data:form.serialize(),
+                    success:function(data){
+                        alert('Status Visibility Updated!')
+                        window.location.reload()                    
+                    },
+                    error:function(result){
+                        alert('something wrong,see console')
+                        console.log(result.responseText) 
+                    }                   
+                })
+            })
+    })
+}
+function set_visibility_update_btn(){
+    
+    $('.change-visibility-btn').each(function(){
+        var btn = this;
+        $(this).unbind().on('click',function(){
+            var pk = $(btn).val()
+            console.log('click :'+pk)
+            $("#change-visibility-container-"+pk).toggleClass('show-container')
+        })
+    })
+    $('.close-visiblity-btn').on('click',function(e){
+        e.preventDefault()
+        $(this).closest('.change-visibility-container').toggleClass('show-container')
+    })
+}
 function remove_delete_status_button(){
     $('.delete-status-btn').each(function(){
         $(this).remove()
     })
+}
+function remove_visibility_button(){
+    $('.change-visibility-btn').each(function(){
+        $(this).remove()
+    })
+}
+
+function  set_visibility_control_select(data){
+    $('.change-visibility-select').each(function(){
+        var pk = $(this).siblings('.pk-record')[0].value
+        var select = this
+
+        for(e of data){
+            if(e.pk == pk){
+                $(select).val(e.visibility)
+            }
+        }
+    })
+}
+
+function set_control_buttons(data){
+    set_delete_status_btn()
+    set_visibility_update_form()
+    set_visibility_control_select(data)
+    set_visibility_update_btn()
 }

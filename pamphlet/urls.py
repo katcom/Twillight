@@ -37,6 +37,9 @@ urlpatterns = [
     path('api/get-friend-requests/',api.get_friend_requests,name="get friend requests"),
     path('api/get-profile/<str:user_id>',api.get_profile,name="get friend requests"),
     path('api/delete-status/',api.delete_status,name="get friend requests"),
+    path('api/upload-profile-background-image/',api.upload_profile_background_image,name="upload_profile_background_image"),
+    path('api/update-description/',api.update_description,name="update description"),
+    path('api/update-status-visibility/',api.update_status_visibility,name="update description")
 
     # path('<str:room_name>/',login_required(login_url='/login/')(views.room),name='room'),
 

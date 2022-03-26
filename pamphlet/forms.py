@@ -28,3 +28,18 @@ class LikeEntryForm(forms.ModelForm):
     class Meta:
         model = LikesEntry
         fields=('status',)
+
+class ProfileBackgroundImageForm(forms.ModelForm):
+    class Meta:
+        model=ProfileEntry
+        fields=('background_image',)
+
+class DescriptionForm(forms.ModelForm):
+    class Meta:
+        model=UserDescription
+        fields=('description',)
+
+class StatusVisibilityForm(forms.ModelForm):
+    class Meta:
+        model=StatusEntry
+        fields=('visibility',)

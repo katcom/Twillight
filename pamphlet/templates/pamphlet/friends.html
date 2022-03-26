@@ -14,7 +14,6 @@
             border-width: 1px;
             border-color: lightgrey;
             border-style: none none solid none;
-            background-color: white;
         }
         main{
             display: flex;
@@ -42,13 +41,19 @@
             display: flex;
             flex-direction: row;
         }
+        #friend-profile-container{
+            visibility: hidden;
+        }
+        #background-image{
+            transform: translate(50%,200%);
+        }
     </style>
-    <div>
-
-    </div>
-        <div style="width: 100%;display: flex;flex-direction: row;">
+        <div style="width: 100%;display: flex;flex-direction: row;" >
             <div class="col-sm-6 col-md-6 col-lg-8" style="border-right: 1px solid lightgrey;height: 100%;">
-                <div style="width: 100%;">
+                <div id="bg-container" class="w-100 justify-content-center align-items-center " style="display: flex;">
+                    <img id='background-image'src="{% static 'images/Black_Man_Playing_Guitar_Standing_GIF_Animation_Loop.gif'%}">
+                </div>
+                <div style="width: 100%;" id="friend-profile-container" >
                     {%include './profile.html'  with is_editable=False%}
                 </div>
             </div>
@@ -59,29 +64,7 @@
         </div>
 
 
-    {% verbatim %}
-        <script type="text/template" id="single-friend-box" >
-            {{#each result}}
-                        <div class="friend-box " user_id="{{user_id}}">
-                            <div class="user-info-container">
-                                <div>
-                                    <img class='avatar-icon' alt='profile' value='{{user_id}}'>
-
-                                </div>   
-                                <div>
-                                    {{user_custom_name}}
-                                    <p class="date-info">{{user_id}}</p>
-                                </div>   
-
-                            </div>
-                            <div class="chat-button-wrapper justify-content-end" >
-                                <button class='btn btn-primary chat-button' onclick="chat_with_friend('{{user_id}}')">Chat</button>
-
-                            </div>
-                        </div>
-            {{/each}}
-        </script>
-    {% endverbatim %}
+    {% include "./handlebar_templates/friend-box.html"%}
 
 <script>
     $.ajax(
@@ -93,6 +76,7 @@
                 console.log(data)
                 display_friend_list(data)
                 loadStatusAvatar($("#friends-list-container"))
+
             },
             error:function(result){
                 console.log(result.responseText)
@@ -118,7 +102,9 @@
                             console.log('get profile')
                             loadProfile(data);
                             loadProfileStatus(data)
-                            remove_delete_status_button()
+                            $('#bg-container').addClass('hide-container')
+                            $('#friend-profile-container').css('visibility','visible')
+
                         },
                         error:function(result){
                             console.log(result.responseText)
@@ -131,8 +117,8 @@
         
     }
     function chat_with_friend(friend_id){
-        //window.location.href="/private-chat-room/"+friend_id+"/"
-        window.open("/private-chat-room/"+friend_id+"/", '_blank').focus();
+        window.location.href="/private-chat-room/"+friend_id+"/"
+        //window.open("/private-chat-room/"+friend_id+"/", '_blank').focus();
     }
 </script>
 <script src="{% static 'js/status.js'%}"></script>

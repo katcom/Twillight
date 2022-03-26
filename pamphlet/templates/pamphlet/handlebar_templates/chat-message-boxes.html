@@ -1,0 +1,56 @@
+{% verbatim %}
+    <script type="text/template" id="single-outgoing-message-box">
+        <div class="row  justify-content-end single-message-record my-message-box ">
+
+            <div class="col-5 content-box rounded">
+                {{message}}
+            </div>
+            <div class="col-1 ">
+                <img class='avatar-icon' src="{{avatar_url}}" alt="profile">
+            </div>
+        </div>
+    </script>
+    <script type="text/template" id="single-incoming-message-box">
+        <div class="row justify-content-start single-message-record incoming-message-box">
+            <div class="col-1 d-flex justify-content-center align-items-center">
+                <img class='avatar-icon' src='{{friend_avatar}}' alt="profile">
+            </div>
+            <div class="col-5 content-box rounded">
+                {{message}}
+            </div>
+        </div>
+    </script>
+    <script type="text/template" id="single-message-box">
+        <div class="row single-message-record ">
+            <div class="col-1">
+                <img class='avatar-icon' alt="profile" src="{{avatar_url}}">
+            </div>
+            <div class="col-5 content-box rounded">
+                {{message}}
+            </div>
+        </div>
+    </script>
+    {% endverbatim %}
+    {% verbatim %}
+    <script type="text/template" id="single-outgoing-image-message-box">
+        <div class="row  justify-content-end single-message-record my-message-box">
+
+            <div class="col-5 content-box rounded">
+                <img src='{{message}}' class='chat-image'>
+            </div>
+            <div class="col-1 ">
+                <img class='avatar-icon' src="{{avatar_url}}" alt="profile">
+            </div>
+        </div>
+    </script>
+    <script type="text/template" id="single-incoming-image-message-box">
+        <div class="row justify-content-start single-message-record incoming-message-box">
+            <div class="col-1 d-flex justify-content-center align-items-center">
+                <img class='avatar-icon' src='{{friend_avatar}}'alt="profile">
+            </div>
+            <div class="col-5 content-box rounded">
+                <img src='{{message}}' class='chat-image'>
+            </div>
+        </div>
+    </script>
+    {% endverbatim %}

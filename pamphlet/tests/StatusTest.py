@@ -88,3 +88,31 @@ class DeleteStatusTest(APITestCase):
         response=self.client.post(self.delete_status_url,invalid_delete_data)
         print(response.content)
         self.assertEqual(response.status_code,400)
+
+class ChangeStatusVisibilityTest(APITestCase):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        mangaer = UserManager()
+        cls.user = mangaer.create(user_custom_name="Docker",username="8942",password="887788uuy")
+        cls.friend = mangaer.create(user_custom_name="Friend",username="friend",password="887788uuy")
+
+        cls.url='/api/update-status-visibility/'
+        cls.client = APIClient()
+        cls.user_status = StatusEntryFactory(user=cls.user.user, visibility = Visibility.PUBLIC_VIEW)
+        cls.friend_status = StatusEntryFactory(user=cls.friend.user)
+    def setUp(self):
+        self.client.force_login(self.user.user)
+    def test_change_visibility_success(self):
+        valid_data = {'pk':self.user_status.pk,'visibility':Visibility.PRIVATE_VIEW}
+        response = self.client.post(self.url,valid_data)
+        print(response.content)
+        self.assertEqual(response.status_code,200)
+    def test_change_visibility_success_and_visi_changed(self):
+        valid_data = {'pk':self.user_status.pk,'visibility':Visibility.PRIVATE_VIEW}
+        response = self.client.post(self.url,valid_data)
+        self.assertEqual(StatusEntry.objects.get(pk=self.user_status.pk).visibility,Visibility.PRIVATE_VIEW)
+    def test_change_visibility_failed_on_unauthorized_update_to_another_user(self):
+        invalid_data = {'pk':self.friend_status.pk,'visibility':Visibility.PRIVATE_VIEW}
+        response = self.client.post(self.url,invalid_data)
+        self.assertEqual(response.status_code,401)

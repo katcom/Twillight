@@ -53,3 +53,10 @@ function toUserProfilePage(user_id){
 
 
 
+document.querySelector('#search-keyword-input').onkeydown = function(e) {
+    console.log('ku')
+    if (e.keyCode === 13) {  // enter, return
+        e.preventDefault()
+        document.querySelector('#search-btn').click();
+    }
+};

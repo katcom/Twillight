@@ -1,16 +1,10 @@
 <!-- chat/templates/chat/room.html -->
-{% load bootstrap4 %}
+
+{% extends "pamphlet/base.html" %}
+{%load bootstrap4 %}
 {% load static %}
 
-<!DOCTYPE html>
-<html>
-<head>
-    {% bootstrap_css%}
-
-    <meta charset="utf-8"/>
-    <title>Chat Room</title>
-</head>
-<body>
+{% block content %}
     <link rel="stylesheet" type="text/css" href="{% static 'fontawesome/css/all.min.css'%}">
 
     <script src="{% static 'js/jquery-3.6.0.min.js'%}"></script>
@@ -21,10 +15,10 @@
 
     <style>
         .my-message-box .content-box{
-            background-color: lightgreen;
+            background-color: blanchedalmond;
             border-style: solid;
             border-width: 1px;
-            border-color: lightblue;
+            border-color: lightgray;
             padding:20px 10px 20px 15px;
             word-wrap: break-word;
             width: fit-content;
@@ -46,17 +40,16 @@
             border-color: lavender;
             word-wrap: break-word;
             padding:20px 10px 20px 15px;
-
         }
         .single-message-record{
             margin-top: 10px;
             margin-bottom:10px ;
         }
         #chat-log-container{
-            height: 80vh;
             background-color: whitesmoke;
             border:1px solid lightgray;
             overflow: auto;
+            flex-grow: 1;
         }
         #input-container{
             background-color: whitesmoke;
@@ -66,7 +59,7 @@
             border: none;
             padding: 0 0 0 0;
             margin: 0 0 0 0;
-            color: cornflowerblue ;
+            color: lightskyblue ;
         }
         /* #emoji-button i{
             position: absolute;
@@ -110,15 +103,16 @@
         }
         .emoji-menu{
             transform: translateY(-150%);
-            width: 50%;
+            width: 100%;
         }
         .emoji-picker{
-            font-size: 30px;
-            transform: translateY(140%);
+            font-size: 20px;
+            transform: translateY(100%);
         }
         #room-header{
             background-color: whitesmoke;
             width: 100%;
+            border-top: 1px solid;
         }
         #send-label{
             cursor: pointer;
@@ -129,37 +123,46 @@
         .chat-image{
             width: 100%;
         }
+
     </style>
-    <div id='room-header'class="d-flex container align-items-center">
-        <div class="ml-2 mr-2 btn">
-            <i class="fa-solid fa-arrow-left "></i>
-        </div>
-        <div class="">
-            {{ friend_name}}
-        </div>
-    </div>
-    <!-- <textarea id="chat-log" cols="100" rows="20"></textarea><br> -->
-    <div id="chat-log-container" class="container">
-
-    </div>
-    <div class="container p-2 " id="input-container">
-        <div class=" justify-content-center d-flex">
-            <div id="text-input-container" class="col-10 rounded">
-                <button id="add-button"><label for="image-send"><i class="fa-solid fa-circle-plus"></i></label></button>
-                <input id='image-send'hidden type="file" accept="image/*" >
-                <p class="lead emoji-picker-container">
-
-                <textarea class="form-control textarea-control" id="chat-message-input" type="text"  data-emojiable="true"></textarea><br>
-                </p>
+    <div style="display: flex;flex-direction: column;height: 100%;">
+        <div id='room-header'class="d-flex container align-items-center">
+            <div class="ml-2 mr-2 btn">
+                <i class="fa-solid fa-arrow-left "></i>
             </div>
-            <div class='col-1 d-flex align-items-center p-2'>
-                <label for="chat-message-submit" id="send-label"> <i class="fa-solid fa-angle-right"></i></label>
-                <input class="btn"  id="chat-message-submit" type="button" value="">
-
+            <div class="">
+                {{ friend_name}}
+            </div>
+            <div>
+                <!-- <button>
+                    <i class="fas fa-video"></i>
+                </button> -->
             </div>
         </div>
-
+        <!-- <textarea id="chat-log" cols="100" rows="20"></textarea><br> -->
+        <div id="chat-log-container" class="container">
+    
+        </div>
+        <div class="container p-2 " id="input-container">
+            <div class=" justify-content-center d-flex">
+                <div id="text-input-container" class="col-10 rounded">
+                    <button id="add-button"><label for="image-send"><i class="fa-solid fa-circle-plus"></i></label></button>
+                    <input id='image-send'hidden type="file" accept="image/*" >
+                    <p class="lead emoji-picker-container">
+    
+                    <textarea class="form-control textarea-control" id="chat-message-input" type="text"  data-emojiable="true"></textarea><br>
+                    </p>
+                </div>
+                <div class='col-1 d-flex align-items-center p-2'>
+                    <label for="chat-message-submit" id="send-label"> <i class="fa-solid fa-angle-right"></i></label>
+                    <input class="btn"  id="chat-message-submit" type="button" value="">
+    
+                </div>
+            </div>
+    
+        </div>
     </div>
+    
 
     {{ room_name|json_script:"room-name" }}
     <script>
@@ -198,6 +201,8 @@
 
         function add_image_message_box(data){
             if (data.message_direction == 'incoming'){
+                data.friend_avatar='{{friend_avatar.url}}'
+
                 var tpl = $("#single-incoming-image-message-box").html()
 
             }else{
@@ -211,6 +216,8 @@
         }
         function add_message_box(data){
             if (data.message_direction == 'incoming'){
+                data.friend_avatar='{{friend_avatar.url}}'
+
                 var tpl = $("#single-incoming-message-box").html()
 
             }else{
@@ -246,62 +253,7 @@
         })
     </script>
 
-    {% verbatim %}
-    <script type="text/template" id="single-outgoing-message-box">
-        <div class="row  justify-content-end single-message-record my-message-box ">
-
-            <div class="col-5 content-box rounded">
-                {{message}}
-            </div>
-            <div class="col-1 ">
-                <img class='avatar-icon' src="{{avatar_url}}" alt="profile">
-            </div>
-        </div>
-    </script>
-    <script type="text/template" id="single-incoming-message-box">
-        <div class="row justify-content-start single-message-record incoming-message-box">
-            <div class="col-1">
-                <img alt="profile">
-            </div>
-            <div class="col-5 content-box rounded">
-                {{message}}
-            </div>
-        </div>
-    </script>
-    <script type="text/template" id="single-message-box">
-        <div class="row single-message-record ">
-            <div class="col-1">
-                <img class='avatar-icon' alt="profile" src="{{avatar_url}}">
-            </div>
-            <div class="col-5 content-box rounded">
-                {{message}}
-            </div>
-        </div>
-    </script>
-    {% endverbatim %}
-    {% verbatim %}
-    <script type="text/template" id="single-outgoing-image-message-box">
-        <div class="row  justify-content-end single-message-record my-message-box">
-
-            <div class="col-5 content-box rounded">
-                <img src='{{message}}' class='chat-image'>
-            </div>
-            <div class="col-1 ">
-                <img class='avatar-icon' src="{{avatar_url}}" alt="profile">
-            </div>
-        </div>
-    </script>
-    <script type="text/template" id="single-incoming-image-message-box">
-        <div class="row justify-content-start single-message-record incoming-message-box">
-            <div class="col-1">
-                <img alt="profile">
-            </div>
-            <div class="col-5 content-box rounded">
-                <img src='{{message}}' class='chat-image'>
-            </div>
-        </div>
-    </script>
-    {% endverbatim %}
+    {% include './handlebar_templates/chat-message-boxes.html'%}
     <script src="{% static 'js/room.js' %}"></script>
 
     <script src="{% static 'emoji-picker-main/lib/js/config.js' %}"></script>
@@ -309,23 +261,25 @@
   <script src="{% static 'emoji-picker-main/lib/js/jquery.emojiarea.js' %}"></script>
   <script src="{% static 'emoji-picker-main/lib/js/emoji-picker.js' %}"></script>
   <script>
-    $(function() {
-      // Initializes and creates emoji set from sprite sheet
-      window.emojiPicker = new EmojiPicker({
-        emojiable_selector: '[data-emojiable=true]',
-        assetsPath: "{% static 'emoji-picker-main/lib/img/' %}",
-        popupButtonClasses: 'far fa-grin'
-      });
-      // Finds all elements with `emojiable_selector` and converts them to rich emoji input fields
-      // You may want to delay this step if you have dynamically created input fields that appear later in the loading process
-      // It can be called as many times as necessary; previously converted input fields will not be converted again
-      window.emojiPicker.discover();
-    });
+        var assets_path = "{% static 'emoji-picker-main/lib/img/' %}"
+        var emojiarea_js = "{% static 'emoji-picker-main/lib/js/jquery.emojiarea.js' %}"
   </script>
+
+
   <script>
       $('#room-header').on('click',function(e){
           window.history.back()
       })
+      $.getScript(emojiarea_js, function() {
+            console.log('Load was performed.');
+            window.emojiPicker = new EmojiPicker({
+                emojiable_selector: '[data-emojiable=true]',
+                assetsPath: assets_path,
+                popupButtonClasses: 'far fa-grin'
+            });
+            window.emojiPicker.discover();
+            
+        });
+
   </script>
-</body>
-</html>
+{%endblock%}

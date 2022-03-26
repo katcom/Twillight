@@ -1,0 +1,23 @@
+{% verbatim %}
+        <script type="text/template" id="single-friend-box" >
+            {{#each result}}
+                        <div class="friend-box " user_id="{{user_id}}">
+                            <div class="user-info-container">
+                                <div>
+                                    <img class='avatar-icon' alt='profile' value='{{user_id}}'>
+
+                                </div>   
+                                <div class='ml-2'>
+                                    {{user_custom_name}}
+                                    <p class="date-info">{{user_id}}</p>
+                                </div>   
+
+                            </div>
+                            <div class="chat-button-wrapper justify-content-end" >
+                                <button class='btn btn-primary chat-button' onclick="chat_with_friend('{{user_id}}')">Chat</button>
+
+                            </div>
+                        </div>
+            {{/each}}
+        </script>
+    {% endverbatim %}

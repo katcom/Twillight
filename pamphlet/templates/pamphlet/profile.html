@@ -13,9 +13,10 @@
 
 </style>
 <div class="container" style="width: 100%;">
-    <div  style="width: 100%;border-bottom: 1px solid lightgrey;">
+    <div id="user-profile-header-container" style="width: 100%;border-bottom: 1px solid lightgrey;" class="container">
+
         <div style="display:flex; flex-direction:column;height: 600px;">
-            <div id='background-box' style="height: 50%;background-color: lightcoral;">
+            <div id='background-box' style="height: 50%;background-color: lightcoral;background-size: cover;">
 
             </div>
             <div style="background-color: white;height: 50%;  padding: 20px;">
@@ -25,7 +26,7 @@
                     </div>
                     {% if is_editable %}
                     <div style="align-self: flex-end;justify-self: end;">
-                        <button class="rounded-pill btn btn-outline-success"> Edit Profile </button>
+                        <button id="edit-profile-btn" class="rounded-pill btn btn-outline-success"> Edit Profile </button>
                     </div>
                     {% endif %}
                 </div>
@@ -77,7 +78,16 @@
 
 {% include './handlebar_templates/single-status-box-template.html' %}
 {{ profile|json_script:"user" }}
-
+{%if is_editable%}
+<script> loadControlButtonsWrapper = function(data){set_control_buttons(data)}</script>
+<script>removeControlButtonsWrapper=function(){}</script>
+{%else%}
+<script> loadControlButtonsWrapper = function(){}</script>
+<script> removeControlButtonsWrapper = function(){
+                                        remove_delete_status_button()
+                                        remove_visibility_button()}
+</script>
+{%endif%}
 <script>
 const user = JSON.parse(document.getElementById('user').textContent);
 
@@ -93,7 +103,8 @@ loadProfileStatus(user);
                 display_status_result(data)
                 loadStatusAvatar($('#status-list-container'))
                 setupLikeButtons()
-
+                loadControlButtonsWrapper(data)
+                removeControlButtonsWrapper()
             },
             error:function(result){
                 console.log(result.responseText)
@@ -102,7 +113,11 @@ loadProfileStatus(user);
         })
     }
 function  loadProfile(user){
-    $('#background-box').attr('background',`url('${user.background_image}')`)
+    if (user.profile !== undefined && user.profile !== null){
+        $('#background-box').css('background',`url('${user.profile}')`)
+        $('#background-box').css('background-size',`cover`)
+
+    }
     $('#avatar-img').attr('src',user.avatar)
     $('#description-box').text(user.description)
     $('#user-custom-name-text').text(user.user_custom_name)

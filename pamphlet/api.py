@@ -20,21 +20,25 @@ from django.contrib.auth import user_logged_in
 import json
 @api_view(['POST'])
 def register(request):
-    if request.method == 'POST':
-        user_query = {'username':request.POST['user_id'],'password':request.POST['password']}
-        user_serializer = UserSerializer(data=user_query)
+    try:
+        if request.method == 'POST':
+            user_query = {'username':request.POST['user_id'],'password':request.POST['password']}
+            user_serializer = UserSerializer(data=user_query)
 
-        f_user_query = {"user_custom_name":request.POST['username'],'user':user_query}
-        f_user_serializer=FacePamphletUserSerializer(data=f_user_query)
-        if f_user_serializer.is_valid() and user_serializer.is_valid():
-            #f_user = f_user_serializer.save()
-            manger = UserManager() 
-            f_user = manger.create(username=user_query['username'],user_custom_name=f_user_query['user_custom_name'],password=user_query['password'])
-            AvatarEntry.objects.create(user=f_user.user)
-            return Response(f_user_serializer.data,status=status.HTTP_201_CREATED)
-        else:
-            return Response(f_user_serializer.errors,status=status.HTTP_400_BAD_REQUEST)
-
+            f_user_query = {"user_custom_name":request.POST['username'],'user':user_query}
+            f_user_serializer=FacePamphletUserSerializer(data=f_user_query)
+            if f_user_serializer.is_valid() and user_serializer.is_valid():
+                #f_user = f_user_serializer.save()
+                manger = UserManager() 
+                f_user = manger.create(username=user_query['username'],user_custom_name=f_user_query['user_custom_name'],password=user_query['password'])
+                AvatarEntry.objects.create(user=f_user.user)
+                ProfileEntry.objects.create(user=f_user.user)
+                UserDescription.objects.create(user=f_user.user)
+                return Response(f_user_serializer.data,status=status.HTTP_201_CREATED)
+            else:
+                return Response(f_user_serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+    except:
+        return Response(status=status.HTTP_500-INTERNAL_SERVER_ERROR)
 @api_view(['POST'])
 def login(request):
     if request.method == 'POST':
@@ -362,3 +366,62 @@ def delete_status(request):
     except Exception as e:
         print(e)
         return Response(str(e),status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+def upload_profile_background_image(request):
+    if not request.user.is_authenticated:
+        return  Response(status=status.HTTP_401_UNAUTHORIZED)
+    try:
+        form = ProfileBackgroundImageForm(request.POST,request.FILES,instance=request.user.profile)
+        if form.is_valid():
+            img = form.save()
+            return Response(status=status.HTTP_200_OK)
+        else:
+            return Response('Invalid data',status=status.HTTP_400_BAD_REQUEST)
+
+    except Exception as e:
+        print(e)
+        return Response(str(e),status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+def update_description(request):
+    if not request.user.is_authenticated:
+        return  Response(status=status.HTTP_401_UNAUTHORIZED)
+    try:
+        form = DescriptionForm(request.POST,instance=request.user.description)
+        if form.is_valid():
+            form.save()
+            return Response(status=status.HTTP_200_OK)
+        else:
+            return Response('Invalid data',status=status.HTTP_400_BAD_REQUEST)
+
+    except Exception as e:
+        print(e)
+        return Response(str(e),status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+def update_status_visibility(request):
+    if not request.user.is_authenticated:
+        return  Response(status=status.HTTP_401_UNAUTHORIZED)
+    try:
+        serializer = ChangeStatusVisibilitySerializer(data=request.POST)
+        if serializer.is_valid():
+            # print('is valid')
+            # print('data',serializer.data)
+            # if the post does not belong to the current user,return 401 error
+            status_entry = StatusEntry.objects.get(pk=request.POST['pk'])
+              
+            if status_entry.user != request.user:
+                return  Response(status=status.HTTP_401_UNAUTHORIZED)
+            
+            status_entry.visibility = serializer.data['visibility']
+            status_entry.save()
+            return Response(status=status.HTTP_200_OK) 
+        else:
+            return Response('Invalid data',status=status.HTTP_400_BAD_REQUEST)
+
+
+    except Exception as e:
+        print(e)
+        return Response(str(e),status=status.HTTP_400_BAD_REQUEST)
+

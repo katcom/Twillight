@@ -26,6 +26,7 @@
             align-items: center;
             margin:30px;
             border-bottom: 1px solid lightgrey;
+            padding-bottom: 10px;
         }
         #avatar-image-upload-form p input[type=file]{
             display: none;
@@ -51,7 +52,7 @@
     <form id='settings-form' method="POST" action="/api/update-user-settings/">
         {% csrf_token %}
         <p>
-            <label for="{{ form.user_custom_name.id_for_label }}">User custom name:</label>
+            <label for="{{ form.user_custom_name.id_for_label }}">Nick name:</label>
             {{form.user_custom_name}}
         </p>
         <input class='btn btn-primary' type="submit" value="Apply">
