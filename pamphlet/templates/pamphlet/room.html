@@ -123,10 +123,42 @@
         .chat-image{
             width: 100%;
         }
-
+        .video-container{
+            background-color: gray;
+            border:1px solid lightgray;
+            overflow: auto;
+            flex-grow: 1;
+            display: flex;
+            height: 50%;
+            position: relative;
+        }
+        .video-p2p{
+            width: 100%;
+             height: 100%;
+             background-color: grey;
+        }
+        .video-control-btn{
+            width: 1.5rem;
+            height: 1.5rem;
+            position: absolute;
+            background-color: lightskyblue;
+            bottom: 0%;
+            left: 50%;
+            z-index: 99;
+            transform: translate(0px,-50%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .btn-off{
+            background-color: red;
+        }
+        #room-header{
+            justify-content: space-around;
+        }
     </style>
     <div style="display: flex;flex-direction: column;height: 100%;">
-        <div id='room-header'class="d-flex container align-items-center">
+        <div id='room-header'class="d-flex container align-items-center ">
             <div class="ml-2 mr-2 btn">
                 <i class="fa-solid fa-arrow-left "></i>
             </div>
@@ -134,14 +166,23 @@
                 {{ friend_name}}
             </div>
             <div>
-                <!-- <button>
+                <button id="video-btn" class="btn">
                     <i class="fas fa-video"></i>
-                </button> -->
+                </button>
             </div>
         </div>
         <!-- <textarea id="chat-log" cols="100" rows="20"></textarea><br> -->
         <div id="chat-log-container" class="container">
     
+        </div>
+        <div id="video-list-container" class="container d-flex flex-column  hide-container" style="height: 80vh;">
+            <div class="video-container">
+                <video id="local-video" class="video-p2p" playsInline muted  ></video>
+                <button id="mute-btn" class="btn rounded-circle video-control-btn"  ><i class="fa-solid fa-volume-xmark"></i></button>
+                <button id="close-cam-btn" style="transform: translate(150%,-50%); "class="btn rounded-circle video-control-btn"><i class="fa-solid fa-video-slash"></i></button>
+            </div>
+
+
         </div>
         <div class="container p-2 " id="input-container">
             <div class=" justify-content-center d-flex">
@@ -167,7 +208,7 @@
     {{ room_name|json_script:"room-name" }}
     <script>
         const roomName = JSON.parse(document.getElementById('room-name').textContent);
-
+        const username="{{user.username}}"
         const chatSocket = new WebSocket(
             'ws://'
             + window.location.host
@@ -175,18 +216,75 @@
             + roomName
             + '/'
         );
-
+        chatSocket.onopen=function(e){
+            sendSignal('new-peer',{})
+        }
         chatSocket.onmessage = function(e) {
             const data = JSON.parse(e.data);
             console.log(data)
             // document.querySelector('#chat-log').value += (data.sender+":"+data.message + '\n');
             if(data['type'] === 'image_message'){
                 add_image_message_box(data)
-            }else{
+                return;
+            }else if(data['type'] === 'chat_message'){
                 add_message_box(data)
+                return;
             }
-        };
 
+            if(data['type']=='send_sdp'){
+
+                var peerUsername = data['peer']
+                
+                if (peerUsername == username){
+                    return
+                }
+
+                var action = data['action']
+
+                var receiver_channel_name = data['message']['receiver_channel_name']
+                if(action=='new-peer'){
+                    console.log('receive new peer:'+peerUsername)
+                    createOfferer(peerUsername,receiver_channel_name)
+                    return;
+                }
+                if(action=='new-offer'){
+                    console.log('receive new offer')
+
+                    var offer=data['message']['sdp']
+                    createAnswer(offer,peerUsername,receiver_channel_name)
+                    return
+                }
+                if(action=='new-answer'){
+                    console.log('receive new answer:')
+
+                    answer=data['message']['sdp']
+                    var peer = mapPeers[peerUsername][0];
+                    peer.setRemoteDescription(answer)
+                    return
+                }
+            }
+
+
+        };
+        document.querySelector('#chat-message-submit').onclick = function(e) {
+            e.preventDefault()
+            console.log('submi')
+            const messageInputDom = document.querySelector('#chat-message-input');
+            const message = messageInputDom.value;
+            if (message == ""){
+                return
+            }
+            chatSocket.send(JSON.stringify({
+                'message': message,
+                'type':'chat_message',
+                'action':'send-message'
+            }));
+            console.log('send')
+            messageInputDom.value = '';
+            $('#text-input-container .emoji-wysiwyg-editor').empty()
+            $("#chat-log-container").animate({ scrollTop: $('#chat-log-container').prop("scrollHeight") }, 1000);
+
+        };
         chatSocket.onclose = function(e) {
             console.error('Chat socket closed unexpectedly');
         };
@@ -242,7 +340,7 @@
                         chatSocket.send(JSON.stringify({
                             'message': base64_data,
                             'type':'image_message',
-
+                            'action':'send-message'
                         }));
                     ;
                 };
@@ -251,6 +349,16 @@
             reader.readAsDataURL(file);
             
         })
+        $('#video-btn').on('click',function(e){
+            e.preventDefault()
+            btn = e.currentTarget;
+            $('#chat-log-container').toggleClass('hide-container')
+            $('#video-list-container').toggleClass('hide-container')
+
+            e.stopPropagation()
+
+        })
+
     </script>
 
     {% include './handlebar_templates/chat-message-boxes.html'%}
